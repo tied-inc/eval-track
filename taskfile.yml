@@ -1,0 +1,22 @@
+version: '3'
+
+tasks:
+  format:
+    desc: Format Python code with uv and ruff
+    cmds:
+      - task: format-tracker
+      - task: format-server
+
+  format-tracker:
+    internal: true
+    dir: tracker
+    cmds:
+      - uv run ruff check --fix .
+      - uv run ruff format .
+
+  format-server:
+    internal: true
+    dir: server
+    cmds:
+      - uv run ruff check --fix .
+      - uv run ruff format .
