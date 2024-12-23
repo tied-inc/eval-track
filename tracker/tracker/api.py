@@ -1,5 +1,6 @@
-from fastapi import FastAPI, APIRouter
 import logging
+
+from fastapi import APIRouter, FastAPI
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 router = APIRouter()
@@ -25,4 +26,4 @@ async def put_trace(trace_id: str, data: dict) -> None:
 
 if __name__ == "__main__":
     app = FastAPI()
-    app.include_router()
+    app.include_router(router=router)
