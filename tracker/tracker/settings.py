@@ -1,6 +1,8 @@
-from pydantic_settings import BaseSettings
 from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    EVAL_TRACKER_BASE_URL: str = Field(..., description="tracker api service url")
+    eval_tracker_base_url: str = Field(..., description="tracker api service url")
+
+    model_config = SettingsConfigDict(env_file_encoding="utf-8", env_file=".env")
