@@ -3,26 +3,13 @@ import logging
 from functools import wraps
 from typing import Any, Callable
 
-import httpx
 from fastapi import BackgroundTasks
 from pydantic import BaseModel
 from ulid import ULID
 
-from tracker.settings import Settings
+from tracker.client import EvalTrackClient
 
 logger = logging.getLogger(__name__)
-settings = Settings()
-
-
-def put_trace(trace_id: str, data: dict) -> None:
-    try:
-        with httpx.Client() as client:
-            ret = client.put(f"{settings.eval_tracker_base_url}/traces/{trace_id}", data=data)
-            if ret.status_code != httpx.codes.OK:
-                logger.error(f"receive not ok status code: {ret.status_code}")
-            logger.info("put trace succeeded")
-    except Exception:
-        logger.error("receive unexpected error")
 
 
 def capture_response(func: Callable) -> Callable:
@@ -42,12 +29,14 @@ def capture_response(func: Callable) -> Callable:
     """
     bt = BackgroundTasks()
     trace_id = str(ULID())
+    client = EvalTrackClient()
+
     if asyncio.iscoroutinefunction(func):
 
         @wraps(func)
         async def _async_capture_response(*args: Any, **kwargs: Any) -> Any:
             ret: BaseModel = await func(*args, **kwargs)
-            bt.add_task(put_trace, trace_id, ret.model_dump())
+            bt.add_task(client.put_trace, trace_id, ret.model_dump())
             return ret
 
         return _async_capture_response
@@ -55,7 +44,7 @@ def capture_response(func: Callable) -> Callable:
     @wraps(func)
     def _capture_response(*args: Any, **kwargs: Any) -> Any:
         ret: BaseModel = func(*args, **kwargs)
-        bt.add_task(put_trace, trace_id, ret.model_dump())
+        bt.add_task(client.put_trace, trace_id, ret.model_dump())
         return ret
 
     return _capture_response

@@ -1,9 +1,9 @@
 import logging
 
-from fastapi import APIRouter, FastAPI
+from fastapi import APIRouter
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
-router = APIRouter()
+router = APIRouter(prefix="/eval-track")
 logger = logging.getLogger(__name__)
 
 
@@ -22,8 +22,3 @@ async def get_traces() -> dict:
 @router.put("/traces/{trace_id}", status_code=204)
 async def put_trace(trace_id: str, data: dict) -> None:
     logger.info(f"Received logs with traceId: {trace_id}")
-
-
-if __name__ == "__main__":
-    app = FastAPI()
-    app.include_router(router=router)

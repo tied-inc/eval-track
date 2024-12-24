@@ -6,21 +6,21 @@ tasks:
     cmds:
       - task --list
 
-  check-tracker-all:
-    desc: Format Python code with uv and ruff
+  check-all-tracker:
+    desc: Run all checks
     cmds:
-      - task: format-tracker
-      - task: mypy-tracker
+      - task format-tracker
+      - task mypy-tracker
 
   format-tracker:
-    internal: true
+    desc: Format code
     dir: tracker
     cmds:
       - uv run ruff check --fix .
       - uv run ruff format .
 
   mypy-tracker:
-    internal: true
+    desc: Run mypy
     dir: tracker
     cmds:
       - uv run mypy .
