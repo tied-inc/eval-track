@@ -9,6 +9,7 @@ dependencies = [
     "httpx>=0.28.1",
     "pydantic-settings>=2.7.0",
     "python-ulid[pydantic]>=3.0.0",
+    "uvicorn>=0.34.0",
 ]
 
 [tool.uv]

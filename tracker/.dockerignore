@@ -1,0 +1,23 @@
+# Ignore Python bytecode files
+*.pyc
+*.pyo
+__pycache__/
+
+# Ignore virtual environment directories
+venv/
+env/
+ENV/
+
+# Ignore distribution files
+dist/
+build/
+*.egg-info/
+
+# Ignore local configuration files
+*.env
+*.local
+
+# Ignore Docker-related files
+Dockerfile
+docker-compose.yml
+.dockerignore
