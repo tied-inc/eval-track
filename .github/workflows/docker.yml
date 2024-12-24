@@ -21,7 +21,9 @@ jobs:
       packages: write
       attestations: write
       id-token: write
-      #
+    defaults:
+      run:
+        working-directory: ./tracker
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
