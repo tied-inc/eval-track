@@ -1,5 +1,3 @@
-from typing import Any
-
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -18,11 +16,7 @@ class Settings(BaseSettings):
 
         return v.split(",")
 
-    model_config = SettingsConfigDict(
-        env_file = ".env",
-        env_file_encoding = "utf-8",
-        enable_decoding = False
-    )
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", enable_decoding=False)
 
 
 settings = Settings()
