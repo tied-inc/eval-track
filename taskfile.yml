@@ -11,6 +11,39 @@ tasks:
     cmds:
       - curl -LsSf https://astral.sh/uv/install.sh | sh
 
+  ##################
+  # Core
+  ##################
+  install-core:
+    desc: Install dependencies
+    dir: core
+    cmds:
+      - uv sync --frozen
+
+  migrate-dev-core:
+    desc: Run migrations
+    dir: core
+    cmds:
+      - uvx prisma migrate dev --name {{.CLI_ARGS}}
+    vars:
+      NAME: '{{.CLI_ARGS}}'
+
+  migrate-deploy-core:
+    desc: Deploy migrations
+    dir: core
+    cmds:
+      - uvx prisma migrate deploy
+
+  migrate-reset-core:
+    desc: Reset migrations
+    dir: core
+    cmds:
+      - uvx prisma migrate reset --force
+
+
+  ##################
+  # Tracker
+  ##################
   install-tracker:
     desc: Install dependencies
     dir: tracker
