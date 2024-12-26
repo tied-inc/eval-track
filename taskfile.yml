@@ -6,21 +6,50 @@ tasks:
     cmds:
       - task --list
 
+  setup-uv:
+    desc: Install uv
+    cmds:
+      - curl -fsSL https://deno.land/x/uv/install/install.sh | sh
+
+  install-tracker:
+    desc: Install dependencies
+    dir: tracker
+    cmds:
+      - uv sync --frozen
+
+  start-tracker-app:
+    desc: Start the tracker app
+    dir: tracker
+    cmds:
+      - uv run uvicorn tracker.main:app --host 0.0.0.0 --port 8080
+
   check-all-tracker:
     desc: Run all checks
     cmds:
       - task format-tracker
+      - task lint-tracker
       - task mypy-tracker
 
   format-tracker:
     desc: Format code
     dir: tracker
     cmds:
-      - uv run ruff check --fix .
       - uv run ruff format .
+
+  lint-tracker:
+    desc: Run linter
+    dir: tracker
+    cmds:
+      - uv run ruff check --fix .
 
   mypy-tracker:
     desc: Run mypy
     dir: tracker
     cmds:
       - uv run mypy .
+
+  test-tracker:
+    desc: Run tests
+    dir: tracker
+    cmds:
+      - uv run pytest tests/ .
