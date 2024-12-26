@@ -1,0 +1,34 @@
+generator client {
+    provider             = "prisma-client-py"
+    interface            = "asyncio"
+    recursive_type_depth = 5
+}
+
+datasource db {
+    provider  = "postgresql"
+    url       = env("POSTGRES_URL") // uses connection pooling
+    directUrl = env("POSTGRES_SESSION_URL") // uses a direct connection
+}
+
+model Trace {
+    id String @id @default(uuid())
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+    Artifacts Artifacts[]
+
+    @@map("traces")
+}
+
+model Artifacts {
+    id String @id @default(uuid())
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+    traceId String @map("trace_id")
+    trace   Trace  @relation(fields: [traceId], references: [id])
+
+    @@map("artifacts")
+}
