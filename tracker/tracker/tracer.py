@@ -31,24 +31,20 @@ def capture_response(func: Callable) -> Callable:
 
         @wraps(func)
         async def _async_capture_response(*args: Any, **kwargs: Any) -> Any:
-            bt = BackgroundTasks()
             trace_id = str(ULID())
             client = EvalTrackClient()
             ret: BaseModel = await func(*args, **kwargs)
-            bt.add_task(client.put_trace, trace_id, ret.model_dump())
-            await bt()
+            await client.put_trace(trace_id, ret.model_dump())
             return ret
 
         return _async_capture_response
 
     @wraps(func)
     def _capture_response(*args: Any, **kwargs: Any) -> Any:
-        bt = BackgroundTasks()
         trace_id = str(ULID())
         client = EvalTrackClient()
         ret: BaseModel = func(*args, **kwargs)
-        bt.add_task(client.put_trace, trace_id, ret.model_dump())
-        asyncio.run(bt())
+        asyncio.run(client.put_trace(trace_id, ret.model_dump()))
         return ret
 
     return _capture_response
