@@ -36,6 +36,7 @@ def capture_response(func: Callable) -> Callable:
             client = EvalTrackClient()
             ret: BaseModel = await func(*args, **kwargs)
             bt.add_task(client.put_trace, trace_id, ret.model_dump())
+            await bt.run()
             return ret
 
         return _async_capture_response
@@ -47,6 +48,7 @@ def capture_response(func: Callable) -> Callable:
         client = EvalTrackClient()
         ret: BaseModel = func(*args, **kwargs)
         bt.add_task(client.put_trace, trace_id, ret.model_dump())
+        asyncio.run(bt.run())
         return ret
 
     return _capture_response

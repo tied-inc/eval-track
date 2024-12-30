@@ -35,6 +35,7 @@ async def test_secret_key_middleware_invalid_key() -> None:
         mock_settings.eval_tracker_secret_key = "test-key"
         response = await secret_key_middleware(mock_request, mock_call_next)
 
+    assert isinstance(response, Response)
     assert response.status_code == 403
     assert response.body == b"Invalid secret key"
     mock_call_next.assert_not_called()
