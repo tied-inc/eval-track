@@ -70,6 +70,7 @@ tasks:
   check-all-tracker:
     desc: Run all checks
     cmds:
+      - task install-core
       - task format-tracker
       - task lint-tracker
       - task mypy-tracker
