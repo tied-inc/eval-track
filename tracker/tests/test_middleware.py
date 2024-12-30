@@ -7,7 +7,7 @@ from tracker.settings import settings
 
 
 @pytest.mark.asyncio
-async def test_secret_key_middleware_valid_key():
+async def test_secret_key_middleware_valid_key() -> None:
     """Test secret key middleware with valid key."""
     mock_request = MagicMock(spec=Request)
     mock_request.headers = {"x-eval-tracker-secret-key": "test-key"}
@@ -24,7 +24,7 @@ async def test_secret_key_middleware_valid_key():
 
 
 @pytest.mark.asyncio
-async def test_secret_key_middleware_invalid_key():
+async def test_secret_key_middleware_invalid_key() -> None:
     """Test secret key middleware with invalid key."""
     mock_request = MagicMock(spec=Request)
     mock_request.headers = {"x-eval-tracker-secret-key": "wrong-key"}
@@ -43,7 +43,7 @@ async def test_secret_key_middleware_invalid_key():
 
 
 @pytest.mark.asyncio
-async def test_api_access_log_middleware():
+async def test_api_access_log_middleware() -> None:
     """Test API access log middleware."""
     mock_request = MagicMock(spec=Request)
     mock_request.method = "GET"
@@ -61,7 +61,7 @@ async def test_api_access_log_middleware():
 
 
 @pytest.mark.asyncio
-async def test_api_access_log_middleware_disconnected():
+async def test_api_access_log_middleware_disconnected() -> None:
     """Test API access log middleware with client disconnection."""
     mock_request = MagicMock(spec=Request)
     mock_request.method = "GET"

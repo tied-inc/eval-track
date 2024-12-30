@@ -5,7 +5,7 @@ from tracker.client import EvalTrackClient
 
 
 @patch("httpx.Client")
-def test_get_traces_success(mock_client):
+def test_get_traces_success(mock_client) -> None:
     """Test successful retrieval of traces."""
     mock_response = MagicMock()
     mock_response.status_code = 200
@@ -20,7 +20,7 @@ def test_get_traces_success(mock_client):
 
 
 @patch("httpx.Client")
-def test_get_traces_error(mock_client):
+def test_get_traces_error(mock_client) -> None:
     """Test error handling in get_traces."""
     mock_client.return_value.__enter__.return_value.get.side_effect = Exception("Network error")
 
@@ -31,7 +31,7 @@ def test_get_traces_error(mock_client):
 
 
 @patch("httpx.Client")
-def test_put_trace_success(mock_client):
+def test_put_trace_success(mock_client) -> None:
     """Test successful trace update."""
     mock_response = MagicMock()
     mock_response.status_code = 200
@@ -44,7 +44,7 @@ def test_put_trace_success(mock_client):
 
 
 @patch("httpx.Client")
-def test_put_trace_error(mock_client):
+def test_put_trace_error(mock_client) -> None:
     """Test error handling in put_trace."""
     mock_client.return_value.__enter__.return_value.put.side_effect = Exception("Network error")
 

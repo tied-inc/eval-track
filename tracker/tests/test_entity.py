@@ -2,7 +2,7 @@ import pytest
 from tracker.entity import Trace
 
 
-def test_trace_creation():
+def test_trace_creation() -> None:
     """Test that a Trace object can be created with valid data."""
     trace = Trace(
         id="test123",
@@ -18,7 +18,7 @@ def test_trace_creation():
     assert trace.updated_at == "2024-01-01T00:00:00Z"
 
 
-def test_trace_validation():
+def test_trace_validation() -> None:
     """Test that Trace validation works correctly."""
     with pytest.raises(ValueError):
         Trace(
