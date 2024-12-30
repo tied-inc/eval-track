@@ -5,16 +5,25 @@ from abc import ABC, abstractmethod
 class AbstractKeyValueStore(ABC):
     """Abstract base class for key-value storage implementations.
 
-    This interface is maintained for backward compatibility, but new code should
-    use the Prisma client directly through the with_session context manager.
+    DEPRECATED: This interface is maintained only for backward compatibility.
+    New code should use either:
 
-    Example:
+    1. PrismaStore (recommended for existing key-value store usage):
+        ```python
+        from tracker.prisma_store import PrismaStore
+        store = PrismaStore()
+        await store.put_item(key, value)
+        ```
+
+    2. Direct Prisma client (recommended for new features):
         ```python
         from core.core.session import with_session
-
         async with with_session() as db:
             await db.trace.create(...)
         ```
+
+    The direct Prisma client approach is preferred for new features as it provides
+    access to the full Prisma API including relations and complex queries.
     """
 
     @abstractmethod
@@ -37,7 +46,9 @@ class DynamoDB(AbstractKeyValueStore):
 
     def __init__(self) -> None:
         warnings.warn(
-            "DynamoDB storage is deprecated. Use PrismaStore or Prisma client directly.",
+            "DynamoDB storage is deprecated and will be removed in a future version. "
+            "Use PrismaStore for direct replacement or Prisma client for new features. "
+            "See class docstring for migration examples.",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -45,7 +56,9 @@ class DynamoDB(AbstractKeyValueStore):
 
     async def put_item(self, key: str, value: dict) -> None:
         warnings.warn(
-            "DynamoDB storage is deprecated. Use PrismaStore or Prisma client directly.",
+            "DynamoDB storage is deprecated and will be removed in a future version. "
+            "Use PrismaStore for direct replacement or Prisma client for new features. "
+            "See class docstring for migration examples.",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -61,12 +74,20 @@ class Redis(AbstractKeyValueStore):
 
     def __init__(self) -> None:
         warnings.warn(
-            "Redis storage is deprecated. Use PrismaStore or Prisma client directly.", DeprecationWarning, stacklevel=2
+            "Redis storage is deprecated and will be removed in a future version. "
+            "Use PrismaStore for direct replacement or Prisma client for new features. "
+            "See class docstring for migration examples.",
+            DeprecationWarning,
+            stacklevel=2
         )
         ...
 
     async def put_item(self, key: str, value: dict) -> None:
         warnings.warn(
-            "Redis storage is deprecated. Use PrismaStore or Prisma client directly.", DeprecationWarning, stacklevel=2
+            "Redis storage is deprecated and will be removed in a future version. "
+            "Use PrismaStore for direct replacement or Prisma client for new features. "
+            "See class docstring for migration examples.",
+            DeprecationWarning,
+            stacklevel=2
         )
         ...
