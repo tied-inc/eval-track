@@ -32,7 +32,7 @@ jobs:
       - name: Setup Python environment and install packages
         run: |
           uv venv
-          . .venv/bin/activate
+          cd .venv/bin && . activate && cd ../..
           uv pip install -e core
           cd tracker && uv pip install -e .
 
@@ -78,7 +78,7 @@ jobs:
       - name: Setup Python environment and install packages
         run: |
           uv venv
-          . .venv/bin/activate
+          cd .venv/bin && . activate && cd ../..
           uv pip install -e core
           cd tracker && uv pip install -e .
 
