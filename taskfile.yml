@@ -53,8 +53,4 @@ tasks:
     dir: tracker
     cmds:
       - uv run pytest tests/ .
-    method: ignore_error
-    vars:
-      ACCEPTABLE_EXIT_CODES:
-        - 0  # Success
-        - 5  # No tests found
+    ignore_error: true
