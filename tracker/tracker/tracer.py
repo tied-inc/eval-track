@@ -27,14 +27,13 @@ def capture_response(func: Callable) -> Callable:
         Callable: A wrapped function that captures the response while maintaining the
         original function's behavior.
     """
-    bt = BackgroundTasks()
-    trace_id = str(ULID())
-    client = EvalTrackClient()
-
     if asyncio.iscoroutinefunction(func):
 
         @wraps(func)
         async def _async_capture_response(*args: Any, **kwargs: Any) -> Any:
+            bt = BackgroundTasks()
+            trace_id = str(ULID())
+            client = EvalTrackClient()
             ret: BaseModel = await func(*args, **kwargs)
             bt.add_task(client.put_trace, trace_id, ret.model_dump())
             return ret
@@ -43,6 +42,9 @@ def capture_response(func: Callable) -> Callable:
 
     @wraps(func)
     def _capture_response(*args: Any, **kwargs: Any) -> Any:
+        bt = BackgroundTasks()
+        trace_id = str(ULID())
+        client = EvalTrackClient()
         ret: BaseModel = func(*args, **kwargs)
         bt.add_task(client.put_trace, trace_id, ret.model_dump())
         return ret
