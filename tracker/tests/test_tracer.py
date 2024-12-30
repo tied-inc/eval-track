@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 from pydantic import BaseModel
@@ -19,11 +19,11 @@ def test_capture_response_sync() -> None:
 
     with patch("tracker.client.EvalTrackClient") as mock_client:
         mock_client_instance = mock_client.return_value
+        mock_client_instance.put_trace = AsyncMock(return_value=None)
         result = test_func()
 
         assert isinstance(result, TestResponse)
         assert result.value == "test"
-        # Verify background task was added
         mock_client_instance.put_trace.assert_called_once()
 
 
@@ -37,11 +37,11 @@ async def test_capture_response_async() -> None:
 
     with patch("tracker.client.EvalTrackClient") as mock_client:
         mock_client_instance = mock_client.return_value
+        mock_client_instance.put_trace = AsyncMock(return_value=None)
         result = await test_func()
 
         assert isinstance(result, TestResponse)
         assert result.value == "test"
-        # Verify background task was added
         mock_client_instance.put_trace.assert_called_once()
 
 
@@ -54,6 +54,7 @@ def test_capture_response_with_args() -> None:
 
     with patch("tracker.client.EvalTrackClient") as mock_client:
         mock_client_instance = mock_client.return_value
+        mock_client_instance.put_trace = AsyncMock(return_value=None)
         result = test_func("test_value")
 
         assert isinstance(result, TestResponse)
