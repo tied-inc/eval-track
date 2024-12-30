@@ -38,7 +38,7 @@ def capture_response(func: Callable) -> Callable:
             ret: BaseModel = await func(*args, **kwargs)
 
             # Add async task to background tasks
-            async def _store_trace():
+            async def _store_trace() -> None:
                 await client.put_trace(trace_id, ret.model_dump())
 
             bt.add_task(_store_trace)
@@ -51,7 +51,7 @@ def capture_response(func: Callable) -> Callable:
         ret: BaseModel = func(*args, **kwargs)
 
         # Create async task for sync functions
-        async def _store_trace():
+        async def _store_trace() -> None:
             await client.put_trace(trace_id, ret.model_dump())
 
         bt.add_task(_store_trace)

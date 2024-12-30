@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 class EvalTrackClient:
-    def __init__(self):
+    def __init__(self) -> None:
         self.store = PrismaStore()
 
     async def get_traces(self) -> dict:
