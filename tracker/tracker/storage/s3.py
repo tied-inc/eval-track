@@ -18,6 +18,7 @@ class S3Storage(AbstractObjectStorage):
         """
         try:
             import boto3
+
             self.bucket_name = settings.s3_bucket
             self.client = boto3.client(
                 "s3",
