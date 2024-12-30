@@ -20,7 +20,7 @@ def test_capture_response_sync() -> None:
 
     with patch("tracker.client.EvalTrackClient") as mock_client:
         mock_client_instance = mock_client.return_value
-        future = asyncio.Future()
+        future: asyncio.Future[None] = asyncio.Future()
         future.set_result(None)
         mock_client_instance.put_trace = AsyncMock(return_value=future)
         result = test_func()
@@ -40,7 +40,7 @@ async def test_capture_response_async() -> None:
 
     with patch("tracker.client.EvalTrackClient") as mock_client:
         mock_client_instance = mock_client.return_value
-        future = asyncio.Future()
+        future: asyncio.Future[None] = asyncio.Future()
         future.set_result(None)
         mock_client_instance.put_trace = AsyncMock(return_value=future)
         result = await test_func()
@@ -59,7 +59,7 @@ def test_capture_response_with_args() -> None:
 
     with patch("tracker.client.EvalTrackClient") as mock_client:
         mock_client_instance = mock_client.return_value
-        future = asyncio.Future()
+        future: asyncio.Future[None] = asyncio.Future()
         future.set_result(None)
         mock_client_instance.put_trace = AsyncMock(return_value=future)
         result = test_func("test_value")
