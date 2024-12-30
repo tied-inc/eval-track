@@ -53,4 +53,3 @@ tasks:
     dir: tracker
     cmds:
       - uv run pytest tests/ .
-    ignore_error: true
