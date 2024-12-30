@@ -1,9 +1,9 @@
 name: CI
 
 on:
-  pull_request:
-    branches: [ main ]
   push:
+    branches: [ main, feat-*, devin/* ]
+  pull_request:
     branches: [ main ]
 
 jobs:
@@ -30,7 +30,57 @@ jobs:
         run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 
       - name: Install dependencies
-        run: task install-tracker
+        run: |
+          uv pip install -e core
+          cd tracker && uv pip install -e .
 
       - name: Run checks
+        working-directory: ./tracker
+        run: task check-all-tracker
+
+  build-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: eval_track
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with: 
+          python-version: '3.11'
+
+      - name: Install Task
+        uses: arduino/setup-task@v1
+        with:
+          version: '3.x'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Add uv to PATH
+        run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Install dependencies
+        run: |
+          uv pip install -e core
+          cd tracker && uv pip install -e .
+
+      - name: Run checks
+        working-directory: ./tracker
+        env:
+          POSTGRES_URL: postgresql://postgres:password@localhost:5432/eval_track
+          POSTGRES_SESSION_URL: postgresql://postgres:password@localhost:5432/eval_track
         run: task check-all-tracker
