@@ -35,6 +35,8 @@ plugins = ['pydantic.mypy']
 
 [tool.ruff]
 line-length = 119
+
+[tool.ruff.lint]
 select = [
   "C9",
   "E",
@@ -43,5 +45,5 @@ select = [
   "I",
 ]
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 combine-as-imports = true
