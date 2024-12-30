@@ -39,22 +39,17 @@ tasks:
       - uvx prisma migrate deploy
 
   migrate-reset-core:
-    desc: Reset migrations (warning: destructive operation)
+    desc: Reset migrations
     dir: core
     deps: [install-core]
     cmds:
       - uvx prisma migrate reset --force
 
-
   setup-env-core:
     desc: Setup environment variables for PostgreSQL
     dir: core
     cmds:
-      - |
-        if [ ! -f .env ]; then
-          echo "POSTGRES_URL=postgresql://postgres:password@localhost:5432/eval_track" > .env
-          echo "POSTGRES_SESSION_URL=postgresql://postgres:password@localhost:5432/eval_track" >> .env
-        fi
+      - test -f .env || (echo "POSTGRES_URL=postgresql://postgres:password@localhost:5432/eval_track" > .env && echo "POSTGRES_SESSION_URL=postgresql://postgres:password@localhost:5432/eval_track" >> .env)
 
   ##################
   # Tracker
