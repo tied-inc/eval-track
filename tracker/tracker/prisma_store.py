@@ -1,3 +1,5 @@
+from typing import Dict, List, Optional
+
 from core.core.session import with_session
 
 from tracker.db import AbstractKeyValueStore
@@ -19,3 +21,33 @@ class PrismaStore(AbstractKeyValueStore):
 
             # Create or update the trace
             await db.trace.upsert(where={"id": key}, create=trace_data, update=trace_data)
+
+    async def get_item(self, key: str) -> Optional[Dict]:
+        """Retrieve a trace item from the database using Prisma."""
+        async with with_session() as db:
+            trace = await db.trace.find_unique(where={"id": key})
+            if not trace:
+                return None
+            return {
+                "id": trace.id,
+                "request": trace.requestData,
+                "response": trace.responseData,
+                **(trace.metadata or {}),
+            }
+
+    async def get_items(self, limit: int = 100) -> List[Dict]:
+        """Retrieve multiple trace items from the database using Prisma."""
+        async with with_session() as db:
+            traces = await db.trace.find_many(
+                take=limit,
+                order={"createdAt": "desc"},
+            )
+            return [
+                {
+                    "id": trace.id,
+                    "request": trace.requestData,
+                    "response": trace.responseData,
+                    **(trace.metadata or {}),
+                }
+                for trace in traces
+            ]
