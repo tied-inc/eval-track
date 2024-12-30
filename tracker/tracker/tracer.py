@@ -36,9 +36,11 @@ def capture_response(func: Callable) -> Callable:
         @wraps(func)
         async def _async_capture_response(*args: Any, **kwargs: Any) -> Any:
             ret: BaseModel = await func(*args, **kwargs)
+
             # Add async task to background tasks
             async def _store_trace():
                 await client.put_trace(trace_id, ret.model_dump())
+
             bt.add_task(_store_trace)
             return ret
 
@@ -47,9 +49,11 @@ def capture_response(func: Callable) -> Callable:
     @wraps(func)
     def _capture_response(*args: Any, **kwargs: Any) -> Any:
         ret: BaseModel = func(*args, **kwargs)
+
         # Create async task for sync functions
         async def _store_trace():
             await client.put_trace(trace_id, ret.model_dump())
+
         bt.add_task(_store_trace)
         return ret
 

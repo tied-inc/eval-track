@@ -1,5 +1,7 @@
 import logging
+
 from core.core.session import with_session
+
 from tracker.prisma_store import PrismaStore
 
 logger = logging.getLogger(__name__)
@@ -13,11 +15,7 @@ class EvalTrackClient:
         logger.info("Getting traces from database")
         try:
             async with with_session() as db:
-                traces = await db.trace.find_many(
-                    include={
-                        "Artifacts": True
-                    }
-                )
+                traces = await db.trace.find_many(include={"Artifacts": True})
                 return {"traces": [trace.dict() for trace in traces]}
         except Exception:
             logger.error("Failed to get traces from database")
