@@ -1,11 +1,11 @@
 from contextlib import asynccontextmanager
-from typing import AsyncContextManager, Any
+from typing import Any, AsyncGenerator
 
 from prisma.client import Prisma
 
 
 @asynccontextmanager
-async def with_session(*args: Any, **kwargs: Any) -> AsyncContextManager[Prisma]:
+async def with_session(*args: Any, **kwargs: Any) -> AsyncGenerator[Prisma, None]:
     db = Prisma()
     try:
         await db.connect()
