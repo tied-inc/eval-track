@@ -1,50 +1,42 @@
 """AWS S3 storage implementation for eval-track."""
+
 from typing import Optional
+
+from tracker.settings import settings
 
 from .storage import AbstractObjectStorage, StorageError
 
 
 class S3Storage(AbstractObjectStorage):
     """AWS S3 storage implementation."""
-    
-    def __init__(
-        self,
-        bucket_name: str,
-        region: str,
-        aws_access_key: str,
-        aws_secret_key: str,
-    ) -> None:
-        """Initialize S3 storage client.
-        
-        Args:
-            bucket_name: Name of the S3 bucket to store logs in
-            region: AWS region where the bucket is located
-            aws_access_key: AWS access key ID
-            aws_secret_key: AWS secret access key
+
+    def __init__(self) -> None:
+        """Initialize S3 storage client using settings configuration.
+
+        Raises:
+            StorageError: If boto3 package is not available or if settings are invalid
         """
         try:
             import boto3
+            self.bucket_name = settings.s3_bucket
+            self.client = boto3.client(
+                "s3",
+                region_name=settings.s3_region,
+                aws_access_key_id=str(settings.s3_access_key.get_secret_value()),
+                aws_secret_access_key=str(settings.s3_secret_key.get_secret_value()),
+            )
         except ImportError:
             raise StorageError(
-                "boto3 package is required for S3 storage. "
-                "Please install it with: pip install boto3"
+                "boto3 package is required for S3 storage. " "Please install it with: pip install boto3"
             )
-
-        self.client = boto3.client(
-            "s3",
-            region_name=region,
-            aws_access_key_id=aws_access_key,
-            aws_secret_access_key=aws_secret_key,
-        )
-        self.bucket_name = bucket_name
 
     def upload_log(self, key: str, data: bytes) -> None:
         """Upload log data to S3.
-        
+
         Args:
             key: Unique identifier for the log data
             data: Raw bytes of log data to store
-            
+
         Raises:
             StorageError: If the upload fails
         """
@@ -59,13 +51,13 @@ class S3Storage(AbstractObjectStorage):
 
     def get_log(self, key: str) -> Optional[bytes]:
         """Retrieve log data from S3.
-        
+
         Args:
             key: Unique identifier for the log data to retrieve
-            
+
         Returns:
             The log data as bytes if found, None if not found
-            
+
         Raises:
             StorageError: If the retrieval fails for any reason
             other than the key not existing
