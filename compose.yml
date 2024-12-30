@@ -10,7 +10,7 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - dynamodb
+      - postgres
 
   postgres:
     container_name: postgres
@@ -33,5 +33,4 @@ services:
       start_period: 30s
 
 volumes:
-  dynamodb-data:
   postgres:
