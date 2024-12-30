@@ -34,8 +34,8 @@ def capture_response(func: Callable) -> Callable:
             trace_id = str(ULID())
             client = EvalTrackClient()
             ret: BaseModel = await func(*args, **kwargs)
-            # Call put_trace without awaiting its None return
-            await client.put_trace(trace_id, ret.model_dump())
+            # put_trace returns None, so we don't need to await its result
+            await client.put_trace(trace_id, ret.model_dump())  # type: ignore[func-returns-value]
             return ret
 
         return _async_capture_response
@@ -49,7 +49,8 @@ def capture_response(func: Callable) -> Callable:
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         try:
-            loop.run_until_complete(client.put_trace(trace_id, ret.model_dump()))
+            # put_trace returns None, so we don't need to use its result
+            loop.run_until_complete(client.put_trace(trace_id, ret.model_dump()))  # type: ignore[func-returns-value]
         finally:
             loop.close()
         return ret
