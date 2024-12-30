@@ -34,7 +34,7 @@ def capture_response(func: Callable) -> Callable:
             trace_id = str(ULID())
             client = EvalTrackClient()
             ret: BaseModel = await func(*args, **kwargs)
-            await client.put_trace(trace_id, ret.model_dump())
+            _ = await client.put_trace(trace_id, ret.model_dump())  # Explicitly ignore None return
             return ret
 
         return _async_capture_response
@@ -44,7 +44,7 @@ def capture_response(func: Callable) -> Callable:
         trace_id = str(ULID())
         client = EvalTrackClient()
         ret: BaseModel = func(*args, **kwargs)
-        asyncio.run(client.put_trace(trace_id, ret.model_dump()))
+        _ = asyncio.run(client.put_trace(trace_id, ret.model_dump()))  # Explicitly ignore None return
         return ret
 
     return _capture_response
