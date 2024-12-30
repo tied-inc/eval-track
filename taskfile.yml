@@ -19,6 +19,7 @@ tasks:
     dir: core
     cmds:
       - uv sync --frozen
+      - task: setup-env-core
 
   migrate-dev-core:
     desc: Run migrations
@@ -40,6 +41,16 @@ tasks:
     cmds:
       - uvx prisma migrate reset --force
 
+
+  setup-env-core:
+    desc: Setup environment variables for PostgreSQL
+    dir: core
+    cmds:
+      - |
+        if [ ! -f .env ]; then
+          echo "POSTGRES_URL=postgresql://postgres:password@localhost:5432/eval_track" > .env
+          echo "POSTGRES_SESSION_URL=postgresql://postgres:password@localhost:5432/eval_track" >> .env
+        fi
 
   ##################
   # Tracker
