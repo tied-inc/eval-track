@@ -1,11 +1,10 @@
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 from tracker.client import EvalTrackClient
 
 
 @patch("httpx.Client")
-def test_get_traces_success(mock_client) -> None:
+def test_get_traces_success(mock_client: MagicMock) -> None:
     """Test successful retrieval of traces."""
     mock_response = MagicMock()
     mock_response.status_code = 200
@@ -20,7 +19,7 @@ def test_get_traces_success(mock_client) -> None:
 
 
 @patch("httpx.Client")
-def test_get_traces_error(mock_client) -> None:
+def test_get_traces_error(mock_client: MagicMock) -> None:
     """Test error handling in get_traces."""
     mock_client.return_value.__enter__.return_value.get.side_effect = Exception("Network error")
 
@@ -31,7 +30,7 @@ def test_get_traces_error(mock_client) -> None:
 
 
 @patch("httpx.Client")
-def test_put_trace_success(mock_client) -> None:
+def test_put_trace_success(mock_client: MagicMock) -> None:
     """Test successful trace update."""
     mock_response = MagicMock()
     mock_response.status_code = 200
@@ -44,7 +43,7 @@ def test_put_trace_success(mock_client) -> None:
 
 
 @patch("httpx.Client")
-def test_put_trace_error(mock_client) -> None:
+def test_put_trace_error(mock_client: MagicMock) -> None:
     """Test error handling in put_trace."""
     mock_client.return_value.__enter__.return_value.put.side_effect = Exception("Network error")
 
