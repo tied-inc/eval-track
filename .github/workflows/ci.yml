@@ -37,7 +37,7 @@ jobs:
           cd tracker && uv pip install -e .
 
       - name: Run checks
-        working-directory: ./tracker
+        working-directory: .
         run: task check-all-tracker
 
   build-test:
@@ -83,7 +83,7 @@ jobs:
           cd tracker && uv pip install -e .
 
       - name: Run checks
-        working-directory: ./tracker
+        working-directory: .
         env:
           POSTGRES_URL: postgresql://postgres:password@localhost:5432/eval_track
           POSTGRES_SESSION_URL: postgresql://postgres:password@localhost:5432/eval_track
