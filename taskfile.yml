@@ -9,7 +9,7 @@ tasks:
   setup-uv:
     desc: Install uv
     cmds:
-      - curl -fsSL https://deno.land/x/uv/install/install.sh | sh
+      - curl -LsSf https://astral.sh/uv/install.sh | sh
 
   install-tracker:
     desc: Install dependencies
