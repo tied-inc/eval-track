@@ -15,29 +15,33 @@ tasks:
   # Core
   ##################
   install-core:
-    desc: Install dependencies
+    desc: Install dependencies and generate Prisma client
     dir: core
     cmds:
       - uv sync --frozen
       - task: setup-env-core
+      - uvx prisma generate
 
   migrate-dev-core:
-    desc: Run migrations
+    desc: Run migrations in development
     dir: core
+    deps: [install-core]
     cmds:
       - uvx prisma migrate dev --name {{.CLI_ARGS}}
     vars:
       NAME: '{{.CLI_ARGS}}'
 
   migrate-deploy-core:
-    desc: Deploy migrations
+    desc: Deploy migrations in production
     dir: core
+    deps: [install-core]
     cmds:
       - uvx prisma migrate deploy
 
   migrate-reset-core:
-    desc: Reset migrations
+    desc: Reset migrations (warning: destructive operation)
     dir: core
+    deps: [install-core]
     cmds:
       - uvx prisma migrate reset --force
 
