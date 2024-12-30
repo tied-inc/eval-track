@@ -30,7 +30,6 @@ async def test_secret_key_middleware_invalid_key() -> None:
     mock_request.headers = {"x-eval-tracker-secret-key": "wrong-key"}
 
     mock_call_next = AsyncMock()
-    mock_response = Response(status_code=403, content="Invalid secret key")
 
     with patch("tracker.settings.settings") as mock_settings:
         mock_settings.eval_tracker_secret_key = "test-key"
