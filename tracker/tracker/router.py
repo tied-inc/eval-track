@@ -1,5 +1,6 @@
 import logging
 
+from core.core.session import with_session
 from fastapi import APIRouter
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
@@ -13,18 +14,11 @@ def get_health() -> str:
     return "OK"
 
 
-from core.core.session import with_session
-
-
 @router.get("/traces")
 async def get_traces() -> dict:
     logger.info("Logs retrieval endpoint called")
     async with with_session() as db:
-        traces = await db.trace.find_many(
-            include={
-                "Artifacts": True
-            }
-        )
+        traces = await db.trace.find_many(include={"Artifacts": True})
         return {"traces": [trace.dict() for trace in traces]}
 
 
@@ -38,16 +32,11 @@ async def put_trace(trace_id: str, data: dict) -> None:
                 "id": trace_id,
                 "requestData": data.get("request"),
                 "responseData": data.get("response"),
-                "metadata": {
-                    "created_at": data.get("created_at"),
-                    "updated_at": data.get("updated_at")
-                }
+                "metadata": {"created_at": data.get("created_at"), "updated_at": data.get("updated_at")},
             },
             update={
                 "requestData": data.get("request"),
                 "responseData": data.get("response"),
-                "metadata": {
-                    "updated_at": data.get("updated_at")
-                }
-            }
+                "metadata": {"updated_at": data.get("updated_at")},
+            },
         )
