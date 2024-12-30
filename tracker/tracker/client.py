@@ -24,7 +24,7 @@ class EvalTrackClient:
     async def put_trace(self, trace_id: str, data: dict) -> None:
         logger.info(f"Storing trace with ID: {trace_id}")
         try:
-            await self.store.put_item(trace_id, data)
+            await self.store.put_trace(trace_id, data)
             logger.info("Successfully stored trace")
         except Exception:
             logger.error("Failed to store trace in database")

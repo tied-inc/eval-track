@@ -2,30 +2,39 @@ from typing import Dict, List, Optional
 
 from core.core.session import with_session
 
-from tracker.db import AbstractKeyValueStore
+from tracker.db import TraceStore
 
 
-class PrismaStore(AbstractKeyValueStore):
-    """Prisma implementation of the key-value store interface."""
+class PrismaStore(TraceStore):
+    """Prisma implementation of the trace store interface."""
 
-    async def put_item(self, key: str, value: dict) -> None:
-        """Store a trace item in the database using Prisma."""
+    async def put_trace(self, trace_id: str, data: dict) -> None:
+        """Store a trace in the database using Prisma.
+
+        Args:
+            trace_id: The unique identifier for the trace
+            data: The trace data containing request and response information
+        """
         async with with_session() as db:
-            # Convert the value dict to match our Prisma schema
             trace_data = {
-                "id": key,
-                "requestData": value.get("request"),
-                "responseData": value.get("response"),
-                "metadata": {"created_at": value.get("created_at"), "updated_at": value.get("updated_at")},
+                "id": trace_id,
+                "requestData": data.get("request"),
+                "responseData": data.get("response"),
+                "metadata": {"created_at": data.get("created_at"), "updated_at": data.get("updated_at")},
             }
+            await db.trace.upsert(where={"id": trace_id}, create=trace_data, update=trace_data)
 
-            # Create or update the trace
-            await db.trace.upsert(where={"id": key}, create=trace_data, update=trace_data)
+    async def get_trace(self, trace_id: str) -> Optional[Dict]:
+        """Retrieve a trace from the database using Prisma.
 
-    async def get_item(self, key: str) -> Optional[Dict]:
-        """Retrieve a trace item from the database using Prisma."""
+        Args:
+            trace_id: The unique identifier for the trace
+
+        Returns:
+            The trace data if found, None otherwise
+        """
         async with with_session() as db:
-            trace = await db.trace.find_unique(where={"id": key})
+            trace = await db.trace.find_unique(where={"id": trace_id})
             if not trace:
                 return None
             return {
@@ -35,8 +44,15 @@ class PrismaStore(AbstractKeyValueStore):
                 **(trace.metadata or {}),
             }
 
-    async def get_items(self, limit: int = 100) -> List[Dict]:
-        """Retrieve multiple trace items from the database using Prisma."""
+    async def get_traces(self, limit: int = 100) -> List[Dict]:
+        """Retrieve multiple traces from the database using Prisma.
+
+        Args:
+            limit: Maximum number of traces to retrieve (default: 100)
+
+        Returns:
+            List of trace data dictionaries
+        """
         async with with_session() as db:
             traces = await db.trace.find_many(
                 take=limit,
@@ -48,6 +64,28 @@ class PrismaStore(AbstractKeyValueStore):
                     "request": trace.requestData,
                     "response": trace.responseData,
                     **(trace.metadata or {}),
+                }
+                for trace in traces
+            ]
+
+    async def find_traces_with_artifacts(self) -> List[Dict]:
+        """Find traces that have associated artifacts.
+
+        Returns:
+            List of trace data dictionaries including their artifacts
+        """
+        async with with_session() as db:
+            traces = await db.trace.find_many(
+                include={"Artifacts": True},
+                where={"Artifacts": {"some": {}}},
+            )
+            return [
+                {
+                    "id": trace.id,
+                    "request": trace.requestData,
+                    "response": trace.responseData,
+                    **(trace.metadata or {}),
+                    "artifacts": [artifact.dict() for artifact in trace.Artifacts],
                 }
                 for trace in traces
             ]

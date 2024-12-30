@@ -1,5 +1,6 @@
 import warnings
 from abc import ABC, abstractmethod
+from typing import Dict, List, Optional
 
 
 class AbstractKeyValueStore(ABC):
@@ -78,9 +79,69 @@ class Redis(AbstractKeyValueStore):
             "Use PrismaStore for direct replacement or Prisma client for new features. "
             "See class docstring for migration examples.",
             DeprecationWarning,
-            stacklevel=2
+            stacklevel=2,
         )
         ...
+
+
+class TraceStore(ABC):
+    """Abstract base class for trace storage implementations.
+
+    This class defines the interface for storing and retrieving traces.
+    It is designed specifically for trace operations and should be used
+    instead of the deprecated AbstractKeyValueStore for all new code.
+
+    Example:
+        ```python
+        class MyTraceStore(TraceStore):
+            async def put_trace(self, trace_id: str, data: dict) -> None:
+                # Implementation
+                pass
+        ```
+    """
+
+    @abstractmethod
+    async def put_trace(self, trace_id: str, data: dict) -> None:
+        """Store a trace with the given ID.
+
+        Args:
+            trace_id: The unique identifier for the trace
+            data: The trace data containing request and response information
+        """
+        pass
+
+    @abstractmethod
+    async def get_trace(self, trace_id: str) -> Optional[Dict]:
+        """Retrieve a trace by ID.
+
+        Args:
+            trace_id: The unique identifier for the trace
+
+        Returns:
+            The trace data if found, None otherwise
+        """
+        pass
+
+    @abstractmethod
+    async def get_traces(self, limit: int = 100) -> List[Dict]:
+        """Retrieve multiple traces.
+
+        Args:
+            limit: Maximum number of traces to retrieve (default: 100)
+
+        Returns:
+            List of trace data dictionaries
+        """
+        pass
+
+    @abstractmethod
+    async def find_traces_with_artifacts(self) -> List[Dict]:
+        """Find traces that have associated artifacts.
+
+        Returns:
+            List of trace data dictionaries including their artifacts
+        """
+        pass
 
     async def put_item(self, key: str, value: dict) -> None:
         warnings.warn(
@@ -88,6 +149,6 @@ class Redis(AbstractKeyValueStore):
             "Use PrismaStore for direct replacement or Prisma client for new features. "
             "See class docstring for migration examples.",
             DeprecationWarning,
-            stacklevel=2
+            stacklevel=2,
         )
         ...
