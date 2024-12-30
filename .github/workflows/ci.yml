@@ -29,8 +29,10 @@ jobs:
       - name: Add uv to PATH
         run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 
-      - name: Install dependencies
+      - name: Setup Python environment and install packages
         run: |
+          uv venv
+          . .venv/bin/activate
           uv pip install -e core
           cd tracker && uv pip install -e .
 
@@ -63,7 +65,7 @@ jobs:
 
       - name: Install Task
         uses: arduino/setup-task@v1
-        with:
+        with: 
           version: '3.x'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -73,8 +75,10 @@ jobs:
       - name: Add uv to PATH
         run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 
-      - name: Install dependencies
+      - name: Setup Python environment and install packages
         run: |
+          uv venv
+          . .venv/bin/activate
           uv pip install -e core
           cd tracker && uv pip install -e .
 
