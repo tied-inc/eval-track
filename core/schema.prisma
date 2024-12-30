@@ -13,9 +13,16 @@ datasource db {
 model Trace {
     id String @id @default(uuid())
 
+    // Timestamps
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
+    // Trace data
+    requestData Json? @map("request_data")   // Store request data as JSON
+    responseData Json? @map("response_data") // Store response data as JSON
+    metadata Json? // Additional metadata
+
+    // Relations
     Artifacts Artifacts[]
 
     @@map("traces")
@@ -24,9 +31,16 @@ model Trace {
 model Artifacts {
     id String @id @default(uuid())
 
+    // Timestamps
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
+    // Content
+    name String       // Name or identifier of the artifact
+    type String      // Type of artifact (e.g., "log", "metric", "error")
+    content Json     // Actual artifact content stored as JSON
+    
+    // Relations
     traceId String @map("trace_id")
     trace   Trace  @relation(fields: [traceId], references: [id])
 
