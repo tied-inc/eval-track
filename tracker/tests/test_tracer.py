@@ -20,8 +20,7 @@ def test_capture_response_sync() -> None:
 
     with patch("tracker.client.EvalTrackClient") as mock_client:
         mock_client_instance = mock_client.return_value
-        mock_client_instance.put_trace = AsyncMock(return_value=asyncio.Future())
-        mock_client_instance.put_trace.return_value.set_result(None)
+        mock_client_instance.put_trace = AsyncMock()
         result = test_func()
 
         assert isinstance(result, TestResponse)
@@ -39,8 +38,7 @@ async def test_capture_response_async() -> None:
 
     with patch("tracker.client.EvalTrackClient") as mock_client:
         mock_client_instance = mock_client.return_value
-        mock_client_instance.put_trace = AsyncMock(return_value=asyncio.Future())
-        mock_client_instance.put_trace.return_value.set_result(None)
+        mock_client_instance.put_trace = AsyncMock()
         result = await test_func()
 
         assert isinstance(result, TestResponse)
@@ -57,8 +55,7 @@ def test_capture_response_with_args() -> None:
 
     with patch("tracker.client.EvalTrackClient") as mock_client:
         mock_client_instance = mock_client.return_value
-        mock_client_instance.put_trace = AsyncMock(return_value=asyncio.Future())
-        mock_client_instance.put_trace.return_value.set_result(None)
+        mock_client_instance.put_trace = AsyncMock()
         result = test_func("test_value")
 
         assert isinstance(result, TestResponse)
