@@ -51,11 +51,22 @@ async def secret_key_middleware(request: Request, call_next: Callable[[Request],
     Returns:
         Response: The response object returned by the next middleware in the chain.
     """
-    header_key = request.headers.get("x-eval-tracker-secret-key")
+    # Skip auth for health check endpoint
+    if request.url.path == "/eval-track/health":
+        return await call_next(request)
 
-    if settings.eval_tracker_secret_key and header_key != settings.eval_tracker_secret_key:
+    header_key = request.headers.get("x-eval-tracker-secret-key")
+    expected_key = settings.eval_tracker_secret_key.get_secret_value()
+
+    # Skip auth if no secret key is configured (development/test environment)
+    if not expected_key:
+        return await call_next(request)
+
+    # Both missing key and invalid key should return the same error
+    # to avoid information leakage
+    if not header_key or header_key != expected_key:
         logger.error("Invalid secret key", extra={"header_key": "REDACTED"})
-        return Response(content="Invalid secret key", status_code=403)
+        return JSONResponse(content={"detail": "Invalid secret key"}, status_code=403)
 
     response = await call_next(request)
 

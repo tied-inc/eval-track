@@ -2,6 +2,7 @@
 
 try:
     from importlib.util import find_spec
+
     if find_spec("boto3"):
         print("boto3 available")
     else:

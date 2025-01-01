@@ -15,7 +15,7 @@ from tracker.storage.s3 import S3Storage, StorageError
 
 
 @pytest.fixture(scope="session")
-def s3_client():
+def s3_client() -> boto3.client:
     """Create a boto3 client connected to localstack."""
     return boto3.client(
         "s3",
@@ -28,7 +28,7 @@ def s3_client():
 
 
 @pytest.fixture(scope="session")
-def s3_bucket(s3_client):
+def s3_bucket(s3_client: boto3.client) -> str:
     """Create a test bucket."""
     bucket_name = "test-bucket"
     s3_client.create_bucket(Bucket=bucket_name)
@@ -36,7 +36,7 @@ def s3_bucket(s3_client):
 
 
 @pytest.fixture
-def s3_storage(monkeypatch, s3_bucket):
+def s3_storage(monkeypatch: pytest.MonkeyPatch, s3_bucket: str) -> S3Storage:
     """Create S3Storage instance configured for localstack."""
     # Set environment variables for S3 configuration
     monkeypatch.setenv("AWS_ENDPOINT_URL", "http://localhost:4566")
@@ -54,7 +54,7 @@ def s3_storage(monkeypatch, s3_bucket):
     return S3Storage()
 
 
-def test_integration_upload_and_retrieve(s3_storage, s3_client, s3_bucket):
+def test_integration_upload_and_retrieve(s3_storage: S3Storage, s3_client: boto3.client, s3_bucket: str) -> None:
     """Test uploading and retrieving data through actual S3 API."""
     key = "test-integration-key"
     data = b"test integration data"
@@ -71,12 +71,12 @@ def test_integration_upload_and_retrieve(s3_storage, s3_client, s3_bucket):
     assert retrieved == data
 
 
-def test_integration_get_nonexistent(s3_storage):
+def test_integration_get_nonexistent(s3_storage: S3Storage) -> None:
     """Test retrieving non-existent key returns None."""
     assert s3_storage.get_log("nonexistent-key") is None
 
 
-def test_integration_invalid_bucket(monkeypatch):
+def test_integration_invalid_bucket(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test error handling with invalid bucket."""
     # Set environment variables for S3 configuration
     monkeypatch.setenv("AWS_ENDPOINT_URL", "http://localhost:4566")

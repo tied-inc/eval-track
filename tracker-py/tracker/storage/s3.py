@@ -4,7 +4,7 @@ import os
 from typing import Optional
 
 from botocore.exceptions import ClientError
-from pydantic import SecretStr
+
 from tracker.settings import settings
 
 from .storage import AbstractObjectStorage, StorageError
@@ -26,7 +26,7 @@ class S3Storage(AbstractObjectStorage):
 
             self.bucket_name = settings.s3_bucket
             config = Config(signature_version="s3v4")
-            
+
             # Build client kwargs
             client_kwargs = {
                 "service_name": "s3",
@@ -35,7 +35,7 @@ class S3Storage(AbstractObjectStorage):
                 "aws_secret_access_key": str(settings.s3_secret_key.get_secret_value()),
                 "config": config,
             }
-            
+
             # Add endpoint_url if specified in environment
             endpoint_url = os.getenv("AWS_ENDPOINT_URL")
             if endpoint_url:
