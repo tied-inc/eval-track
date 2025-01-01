@@ -34,8 +34,11 @@ def capture_response(func: Callable) -> Callable:
             trace_id = str(ULID())
             client = EvalTrackClient()
             ret: BaseModel = await func(*args, **kwargs)
-            # Wait for put_trace to complete
-            await client.put_trace(trace_id, ret.model_dump())  # type: ignore[func-returns-value]
+            try:
+                # Wait for put_trace to complete
+                await client.put_trace(trace_id, ret.model_dump())  # type: ignore[func-returns-value]
+            except Exception as e:
+                logger.error(f"Error putting trace: {e}")
             return ret
 
         return _async_capture_response
@@ -45,14 +48,26 @@ def capture_response(func: Callable) -> Callable:
         trace_id = str(ULID())
         client = EvalTrackClient()
         ret: BaseModel = func(*args, **kwargs)
-        # Create and set up event loop
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
+
+        # Get the current event loop or create a new one
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            should_close = True
+        else:
+            should_close = False
+
         try:
             # Run put_trace in the event loop
             loop.run_until_complete(client.put_trace(trace_id, ret.model_dump()))  # type: ignore[func-returns-value]
+        except Exception as e:
+            logger.error(f"Error putting trace: {e}")
         finally:
-            loop.close()
+            if should_close:
+                loop.close()
+
         return ret
 
     return _capture_response

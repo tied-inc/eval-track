@@ -21,11 +21,13 @@ def test_capture_response_sync() -> None:
     with patch("tracker.client.EvalTrackClient") as mock_client:
         mock_client_instance = mock_client.return_value
         mock_client_instance.put_trace = AsyncMock()
+        mock_client_instance.put_trace.return_value = asyncio.Future()
+        mock_client_instance.put_trace.return_value.set_result(None)
         result = test_func()
 
         assert isinstance(result, TestResponse)
         assert result.value == "test"
-        mock_client_instance.put_trace.assert_called_once()
+        mock_client_instance.put_trace.assert_awaited_once()
 
 
 @pytest.mark.asyncio
@@ -39,11 +41,13 @@ async def test_capture_response_async() -> None:
     with patch("tracker.client.EvalTrackClient") as mock_client:
         mock_client_instance = mock_client.return_value
         mock_client_instance.put_trace = AsyncMock()
+        mock_client_instance.put_trace.return_value = asyncio.Future()
+        mock_client_instance.put_trace.return_value.set_result(None)
         result = await test_func()
 
         assert isinstance(result, TestResponse)
         assert result.value == "test"
-        mock_client_instance.put_trace.assert_called_once()
+        mock_client_instance.put_trace.assert_awaited_once()
 
 
 def test_capture_response_with_args() -> None:
@@ -56,8 +60,10 @@ def test_capture_response_with_args() -> None:
     with patch("tracker.client.EvalTrackClient") as mock_client:
         mock_client_instance = mock_client.return_value
         mock_client_instance.put_trace = AsyncMock()
+        mock_client_instance.put_trace.return_value = asyncio.Future()
+        mock_client_instance.put_trace.return_value.set_result(None)
         result = test_func("test_value")
 
         assert isinstance(result, TestResponse)
         assert result.value == "test_value"
-        mock_client_instance.put_trace.assert_called_once()
+        mock_client_instance.put_trace.assert_awaited_once()
