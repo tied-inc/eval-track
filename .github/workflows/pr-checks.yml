@@ -6,8 +6,10 @@ on:
 
 jobs:
   python-checks:
-    if: contains(github.event.pull_request.changed_files, 'tracker-py/')
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tracker-py
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
@@ -15,18 +17,12 @@ jobs:
           python-version: '3.12'
       - name: Install dependencies
         run: |
-          pip install uv
-          uv pip install ruff mypy
-          cd tracker-py && uv pip install -e ".[dev]"
+          task setup-uv
+          task install
       - name: Run ruff format check
-        run: cd tracker-py && ruff format --check .
-      - name: Run ruff check
-        run: cd tracker-py && ruff check .
-      - name: Run mypy
-        run: cd tracker-py && mypy .
+        run: task check-all
 
   typescript-checks:
-    if: contains(github.event.pull_request.changed_files, 'tracker-ts/')
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -45,7 +41,6 @@ jobs:
         run: task check-all
 
   go-checks:
-    if: contains(github.event.pull_request.changed_files, 'tracker-go/')
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -60,7 +55,6 @@ jobs:
           task check-all
 
   rust-checks:
-    if: contains(github.event.pull_request.changed_files, 'tracker-rs/')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -68,9 +62,6 @@ jobs:
         with:
           toolchain: stable
           components: rustfmt, clippy
-      - name: Run cargo fmt
-        run: cd tracker-rs && cargo fmt -- --check
-      - name: Run cargo clippy
-        run: cd tracker-rs && cargo clippy -- -D warnings
-      - name: Run tests
-        run: cd tracker-rs && cargo test
+      - name: checkall
+        run: |
+          task check-all

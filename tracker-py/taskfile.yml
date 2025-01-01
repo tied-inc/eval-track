@@ -6,6 +6,11 @@ tasks:
     cmds:
       - task --list
 
+  setup-uv:
+    desc: Install uv
+    cmds:
+      - curl -LsSf https://astral.sh/uv/install.sh | sh
+
   install:
     desc: Install dependencies
     cmds:
