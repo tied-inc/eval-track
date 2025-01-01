@@ -42,6 +42,15 @@ jobs:
           uv venv
           source .venv/bin/activate
           task install-tracker
+          uv pip install pytest-asyncio
+
+      - name: Start localstack
+        run: |
+          docker pull localstack/localstack:latest
+          docker run -d --name localstack -p 4566:4566 -e SERVICES=s3 -e DEFAULT_REGION=us-east-1 localstack/localstack:latest
+          echo "Waiting for localstack to be ready..."
+          timeout 30 bash -c 'until curl -s http://localhost:4566/_localstack/health | grep -q "\"s3\": \"running\""; do sleep 1; done'
+          echo "Localstack is ready"
 
       - name: Run code quality checks
         run: |
