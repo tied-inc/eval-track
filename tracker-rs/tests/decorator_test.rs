@@ -34,7 +34,7 @@ async fn test_async_capture_response() {
 fn test_sync_capture_response() {
     // Start runtime for sync test
     let rt = tokio::runtime::Runtime::new().unwrap();
-    
+
     // Start mock server in runtime
     let mock_server = rt.block_on(async {
         let server = MockServer::start().await;

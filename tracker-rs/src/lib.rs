@@ -1,16 +1,16 @@
-pub mod types;
-pub mod error;
 pub mod client;
+pub mod error;
+pub mod types;
 
-use std::cell::RefCell;
-use std::sync::Arc;
 use client::TracerClient;
 use once_cell::sync::OnceCell;
+use std::cell::RefCell;
+use std::sync::Arc;
 
-pub use types::Trace;
-pub use error::TracerError;
-pub use client::TracerClient;
 pub use capture_response_macro::capture_response;
+pub use client::TracerClient;
+pub use error::TracerError;
+pub use types::Trace;
 
 static TRACER_CLIENT: OnceCell<Arc<TracerClient>> = OnceCell::new();
 thread_local! {

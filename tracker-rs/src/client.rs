@@ -30,7 +30,8 @@ impl TracerClient {
 
     pub async fn get_traces(&self) -> Result<Vec<Trace>, TracerError> {
         let url = format!("{}/traces", self.base_url);
-        let resp = self.http_client
+        let resp = self
+            .http_client
             .get(&url)
             .send()
             .await?
