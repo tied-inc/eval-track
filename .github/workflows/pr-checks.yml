@@ -3,12 +3,6 @@ name: PR Checks
 on:
   pull_request:
     branches: [ main ]
-    paths:
-      - 'tracker-py/**'
-      - 'tracker-ts/**'
-      - 'tracker-go/**'
-      - 'tracker-rs/**'
-      - '.github/workflows/**'
 
 jobs:
   python-checks:
