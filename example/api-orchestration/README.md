@@ -1,8 +1,8 @@
 # [Example]: API Orchestration
 
-このサンプルは、複数のマイクロサービス間での eval-track の使用方法を示します。EvalTrackClient と capture_response デコレータを使用して、サービス間の通信を追跡する方法を実演します。
+This example demonstrates how to use eval-track across multiple microservices. It showcases how to track communication between services using the EvalTrackClient and capture_response decorator.
 
-## 実行方法
+## How to Run
 
 ```bash
 git clone https://github.com/tied-inc/eval-track
@@ -11,74 +11,74 @@ uv sync --frozen
 uv main:app
 ```
 
-## エンドポイント
+## Endpoints
 
-このアプリケーションには以下のエンドポイントが含まれています：
+This application includes the following endpoints:
 
-### eval-track 基本エンドポイント
+### eval-track Base Endpoints
 - `GET /eval-track/health`
 - `GET /eval-track/traces`
 - `PUT /eval-track/traces/{trace_id}`
 
-### サービスエンドポイント
-- `GET /service1` - 第1マイクロサービスのデモ
-- `GET /service2` - 第2マイクロサービスのデモ
-- `GET /orchestrate` - サービス間連携のデモ
+### Service Endpoints
+- `GET /service1` - First microservice demo
+- `GET /service2` - Second microservice demo
+- `GET /orchestrate` - Service orchestration demo
 
-## 機能説明
+## Features
 
-1. **マイクロサービス** (`/service1`, `/service2`)
-   - 独立したサービスのシミュレーション
-   - 非同期処理の実装例
-   - @capture_response デコレータによるトレース取得
+1. **Microservices** (`/service1`, `/service2`)
+   - Simulation of independent services
+   - Example of asynchronous processing
+   - Trace capture using @capture_response decorator
 
-2. **オーケストレーション** (`/orchestrate`)
-   - 複数サービスの並列呼び出し
-   - エラーハンドリング
-   - トレースの集約と表示
+2. **Orchestration** (`/orchestrate`)
+   - Parallel service calls
+   - Error handling
+   - Trace aggregation and display
 
-## 使用方法
+## Usage
 
-1. eval-track をインストール:
+1. Install eval-track:
    ```bash
    uv pip install "git+https://github.com/tied-inc/eval-track/tracker"
    ```
 
-2. アプリケーションを実行:
+2. Run the application:
    ```bash
    uvicorn main:app --reload
    ```
 
-3. エンドポイントをテスト:
+3. Test the endpoints:
    ```bash
-   # 個別サービスのテスト
+   # Test individual services
    curl http://localhost:8000/service1
    curl http://localhost:8000/service2
 
-   # オーケストレーションのテスト
+   # Test orchestration
    curl http://localhost:8000/orchestrate
    ```
 
-4. トレースを確認:
+4. View traces:
    ```bash
    curl http://localhost:8000/eval-track/traces
    ```
 
-## 実装の詳細
+## Implementation Details
 
-このサンプルでは以下の機能を実演しています：
+This example demonstrates the following features:
 
-1. **EvalTrackClient の使用**
-   - トレースデータの取得と保存
-   - 複数サービスからのトレースの集約
+1. **Using EvalTrackClient**
+   - Retrieving and storing trace data
+   - Aggregating traces from multiple services
 
-2. **@capture_response デコレータ**
-   - 非同期関数でのトレース取得
-   - エラー発生時のトレース取得
+2. **@capture_response Decorator**
+   - Capturing traces in asynchronous functions
+   - Trace capture during error conditions
 
-3. **サービス間通信**
-   - httpx を使用した非同期HTTP通信
-   - 並列リクエストの処理
-   - エラーハンドリングとリカバリー
+3. **Inter-service Communication**
+   - Asynchronous HTTP communication using httpx
+   - Handling parallel requests
+   - Error handling and recovery
 
-詳細な実装については [main.py](./main.py) を参照してください。
+For detailed implementation, please refer to [main.py](./main.py).

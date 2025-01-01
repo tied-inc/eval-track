@@ -1,8 +1,8 @@
 # [Example]: Advanced FastAPI Usage
 
-このサンプルは、eval-track の高度な使用方法を示します。非同期処理、エラーハンドリング、そしてトレース機能の実践的な使い方を含んでいます。
+This example demonstrates advanced usage patterns for eval-track. It includes practical implementations of asynchronous processing, error handling, and trace functionality.
 
-## 実行方法
+## How to Run
 
 ```bash
 git clone https://github.com/tied-inc/eval-track
@@ -11,62 +11,62 @@ uv sync --frozen
 uv main:app
 ```
 
-## エンドポイント
+## Endpoints
 
-このアプリケーションには以下のエンドポイントが含まれています：
+This application includes the following endpoints:
 
-### eval-track 基本エンドポイント
+### eval-track Base Endpoints
 - `GET /eval-track/health`
 - `GET /eval-track/traces`
 - `PUT /eval-track/traces/{trace_id}`
 
-### サンプルエンドポイント
-- `GET /hello` - 基本的なトレース機能のデモ
-- `GET /async-calc/{x}/{y}` - 非同期処理と計算のデモ
-- `GET /error-demo` - エラーハンドリングのデモ
+### Sample Endpoints
+- `GET /hello` - Basic trace functionality demo
+- `GET /async-calc/{x}/{y}` - Asynchronous processing and calculation demo
+- `GET /error-demo` - Error handling demo
 
-## 機能説明
+## Features
 
-1. **基本的なトレース機能** (`/hello`)
-   - 同期関数でのトレース取得
-   - Pydantic モデルを使用したレスポンス
+1. **Basic Trace Functionality** (`/hello`)
+   - Trace capture in synchronous functions
+   - Response using Pydantic models
 
-2. **非同期計算** (`/async-calc/{x}/{y}`)
-   - 非同期関数でのトレース取得
-   - エラーハンドリング（ゼロ除算）
-   - パスパラメータの使用例
+2. **Asynchronous Calculation** (`/async-calc/{x}/{y}`)
+   - Trace capture in asynchronous functions
+   - Error handling (division by zero)
+   - Path parameter usage example
 
-3. **エラーハンドリング** (`/error-demo`)
-   - HTTPException の発生
-   - エラー時のトレース取得
+3. **Error Handling** (`/error-demo`)
+   - HTTPException demonstration
+   - Trace capture during errors
 
-## 使用方法
+## Usage
 
-1. eval-track をインストール:
+1. Install eval-track:
    ```bash
    uv pip install "git+https://github.com/tied-inc/eval-track/tracker"
    ```
 
-2. アプリケーションを実行:
+2. Run the application:
    ```bash
    uvicorn main:app --reload
    ```
 
-3. エンドポイントをテスト:
+3. Test the endpoints:
    ```bash
-   # 基本的なトレース
+   # Basic trace
    curl http://localhost:8000/hello
 
-   # 非同期計算
+   # Asynchronous calculation
    curl http://localhost:8000/async-calc/10/2
 
-   # エラーハンドリング
+   # Error handling
    curl http://localhost:8000/error-demo
    ```
 
-4. トレースを確認:
+4. View traces:
    ```bash
    curl http://localhost:8000/eval-track/traces
    ```
 
-詳細な実装については [main.py](./main.py) を参照してください。
+For detailed implementation, please refer to [main.py](./main.py).
