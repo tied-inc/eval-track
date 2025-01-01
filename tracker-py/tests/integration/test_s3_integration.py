@@ -5,6 +5,7 @@ import sys
 import pytest
 import boto3
 from botocore.config import Config
+from pydantic import SecretStr
 
 # Add tracker package to Python path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
@@ -36,11 +37,19 @@ def s3_bucket(s3_client):
 @pytest.fixture
 def s3_storage(monkeypatch, s3_bucket):
     """Create S3Storage instance configured for localstack."""
+    # Set environment variables for S3 configuration
     monkeypatch.setenv("AWS_ENDPOINT_URL", "http://localhost:4566")
     monkeypatch.setenv("AWS_ACCESS_KEY_ID", "test")
     monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "test")
     monkeypatch.setenv("AWS_DEFAULT_REGION", "us-east-1")
     monkeypatch.setenv("S3_BUCKET", s3_bucket)
+    
+    # Override settings for testing
+    monkeypatch.setattr("tracker.settings.settings.s3_bucket", s3_bucket)
+    monkeypatch.setattr("tracker.settings.settings.s3_region", "us-east-1")
+    monkeypatch.setattr("tracker.settings.settings.s3_access_key", SecretStr("test"))
+    monkeypatch.setattr("tracker.settings.settings.s3_secret_key", SecretStr("test"))
+    
     return S3Storage()
 
 
