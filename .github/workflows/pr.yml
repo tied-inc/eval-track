@@ -1,0 +1,60 @@
+name: PR Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./tracker
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install task
+        run: |
+          sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
+
+      - name: Setup uv
+        run: |
+          task setup-uv
+
+      - name: Cache uv dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.uv/cache
+          key: ${{ runner.os }}-uv-${{ hashFiles('tracker/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-
+
+      - name: Sync dependencies
+        run: |
+          uv sync --frozen
+
+      - name: Run check-all-tracker
+        run: |
+          task check-all-tracker
+
+      - name: Run test-tracker
+        run: |
+          task test-tracker
+
+      - name: Run coverage-tracker
+        run: |
+          task coverage-tracker
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: |
+            tracker/htmlcov
+            tracker/.coverage
