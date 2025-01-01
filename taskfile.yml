@@ -30,7 +30,7 @@ tasks:
       - uv run ruff format .
       - uv run ruff check --fix .
       - uv run mypy .
-      - uv run pytest tests/ .
+      - PYTHON_PATH=. uv run pytest tests/ .
 
   check-all-example:
     desc: Run all checks
