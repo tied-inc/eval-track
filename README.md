@@ -6,6 +6,29 @@
 ## Contents
 
 - [eval-track/tracker](./tracker/): Python tracker library for FastAPI
+- [Documentation](./docs/): Project documentation using MkDocs
+
+## Documentation
+
+### Local Development
+To view and develop the documentation locally:
+
+1. Install MkDocs and the Material theme:
+    ```sh
+    pip install mkdocs mkdocs-material
+    ```
+
+2. Start the documentation server:
+    ```sh
+    mkdocs serve
+    ```
+    This will start a local server at http://127.0.0.1:8000
+
+3. Build the documentation:
+    ```sh
+    mkdocs build
+    ```
+    This will create a `site` directory with the built documentation.
 
 ## Contributing
 We welcome contributions to the `eval-track` project. To get started, follow these steps:
