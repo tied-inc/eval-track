@@ -16,6 +16,7 @@ tasks:
   format:
     desc: Format code
     cmds:
+      - cargo clippy --fix --lib --allow-dirty -p tracker
       - cargo fmt -- --check
 
   lint:

@@ -1,6 +1,6 @@
-use tracker::{Trace, TracerClient};
 use serde_json::json;
 use tokio;
+use tracker::{Trace, TracerClient};
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 

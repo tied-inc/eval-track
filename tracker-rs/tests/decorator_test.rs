@@ -1,5 +1,5 @@
-use tracker::{capture_response, init_tracer};
 use tokio;
+use tracker::{capture_response, init_tracer};
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 

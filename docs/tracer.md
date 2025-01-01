@@ -182,7 +182,7 @@ cargo add eval-track-rust --git https://github.com/tied-inc/eval-track
 ### Basic Usage
 
 ```rust
-use eval_track_rust::{capture_response, init_tracer};
+use tracker::{capture_response, init_tracer};
 
 // Initialize the tracer
 init_tracer("http://localhost:8000");
@@ -213,7 +213,7 @@ async fn get_data_async() -> Response {
 ### Error Handling
 
 ```rust
-use eval_track_rust::{capture_response, TracerError};
+use tracker::{capture_response, TracerError};
 
 #[capture_response]
 fn risky_operation() -> Result<Response, TracerError> {

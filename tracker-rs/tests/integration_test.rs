@@ -1,9 +1,9 @@
 #[cfg(feature = "integration-tests")]
 mod tests {
-    use tracker::{capture_response, init_tracer, TracerClient};
     use serde_json::json;
     use std::time::Duration;
     use tokio;
+    use tracker::{capture_response, init_tracer, TracerClient};
     use wiremock::matchers::{body_json_schema, method, path};
     use wiremock::{Mock, MockServer, ResponseTemplate};
 

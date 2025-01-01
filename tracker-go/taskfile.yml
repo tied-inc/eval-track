@@ -15,14 +15,20 @@ tasks:
     desc: Run all checks
     cmds:
       - task format
+      - task lint
       - task test
 
   format:
     desc: Format code
     cmds:
-      - go fmt ./pkg/...
+      - go fmt ./...
+
+  lint:
+    desc: Run linters
+    cmds:
+      - go vet ./...
 
   test:
     desc: Run tests
     cmds:
-      - go test ./pkg/...
+      - go test ./...

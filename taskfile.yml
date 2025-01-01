@@ -10,6 +10,9 @@ includes:
   tracker-py:
     taskfile: ./tracker-py/taskfile.yml
     dir: ./tracker-py
+  tracker-rs:
+    taskfile: ./tracker-rs/taskfile.yml
+    dir: ./tracker-rs
   tracker-ts:
     taskfile: ./tracker-ts/taskfile.yml
     dir: ./tracker-ts

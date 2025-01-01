@@ -34,35 +34,36 @@ jobs:
   typescript-checks:
     if: contains(github.event.pull_request.changed_files, 'tracker-ts/')
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tracker-ts
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
       - uses: pnpm/action-setup@v2
         with:
           version: 8
       - name: Install dependencies
-        run: cd tracker-ts && pnpm install
-      - name: Run biome checks
-        run: cd tracker-ts && pnpm lint
-      - name: Run tests
-        run: cd tracker-ts && pnpm test
+        run: task install
+      - name: Run all checks
+        run: task check-all
 
   go-checks:
     if: contains(github.event.pull_request.changed_files, 'tracker-go/')
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tracker-go
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v4
         with:
           go-version: '1.20'
-      - name: Run go fmt
-        run: cd tracker-go && test -z $(go fmt ./...)
-      - name: Run go vet
-        run: cd tracker-go && go vet ./...
-      - name: Run tests
-        run: cd tracker-go && go test ./...
+      - name: Run check-all
+        run: |
+          task check-all
 
   rust-checks:
     if: contains(github.event.pull_request.changed_files, 'tracker-rs/')
