@@ -1,0 +1,11 @@
+site_name: "eval-track Documentation"
+nav:
+  - Home: index.md
+  - Tracker:
+    - Client: client.md
+    - Tracer: tracer.md
+    - Router: router.md
+theme:
+  name: material
+plugins:
+  - search
