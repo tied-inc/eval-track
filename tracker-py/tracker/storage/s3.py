@@ -22,6 +22,7 @@ class S3Storage(AbstractObjectStorage):
         try:
             import boto3
             from botocore.config import Config
+            from botocore.exceptions import ClientError, EndpointConnectionError
 
             self.bucket_name = settings.s3_bucket
             config = Config(signature_version="s3v4")
@@ -40,7 +41,12 @@ class S3Storage(AbstractObjectStorage):
             if endpoint_url:
                 client_kwargs["endpoint_url"] = endpoint_url
 
-            self.client = boto3.client(**client_kwargs)
+            try:
+                self.client = boto3.client(**client_kwargs)
+                # Test if bucket exists and is accessible
+                self.client.head_bucket(Bucket=self.bucket_name)
+            except (ClientError, EndpointConnectionError, ValueError) as e:
+                raise StorageError(f"Failed to initialize S3 storage: {str(e)}")
         except ImportError:
             raise StorageError(
                 "boto3 package is required for S3 storage. " "Please install it with: pip install boto3"
