@@ -20,3 +20,18 @@ uv pip install "git+https://github.com/tied-inc/eval-track/tracker"
 ```
 
 For detailed usage instructions, please refer to each component's documentation.
+
+## Examples
+
+The following examples demonstrate different ways to integrate and use eval-track in your applications:
+
+### [FastAPI Injection](examples/fastapi-injection.md)
+Shows how to inject the eval-track router directly into a FastAPI application for basic trace collection.
+
+### [Advanced FastAPI Usage](examples/advanced-fastapi-usage.md)
+Demonstrates advanced patterns including async processing, error handling, and Pydantic model integration.
+
+### [API Orchestration](examples/api-orchestration.md)
+Illustrates microservice orchestration with parallel request processing and comprehensive trace aggregation.
+
+Each example includes detailed setup instructions, implementation details, and best practices for using eval-track in different scenarios.
