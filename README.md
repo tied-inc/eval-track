@@ -11,10 +11,14 @@ Components
 
 ## Contents
 
+- [Documentation](./docs/): Project documentation using MkDocs
+
+### Trackers 
+
 - [eval-track/tracker-py](./tracker-py/): Tracker for python
 - [eval-track/tracker-go](./tracker-go/): Tracker for golang
 - [eval-track/tracker-ts](./tracker-ts/): Tracker for node
-- [Documentation](./docs/): Project documentation using MkDocs
+
 
 ## Documentation
 
