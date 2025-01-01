@@ -5,6 +5,10 @@ nav:
     - Client: client.md
     - Tracer: tracer.md
     - Router: router.md
+  - Examples:
+    - "FastAPI Injection": examples/fastapi-injection.md
+    - "Advanced FastAPI Usage": examples/advanced-fastapi-usage.md
+    - "API Orchestration": examples/api-orchestration.md
 theme:
   name: material
 plugins:
