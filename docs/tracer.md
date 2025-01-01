@@ -1,7 +1,74 @@
 # Tracer Module
 
-`tracer.py` defines the `capture_response` decorator for capturing responses from functions and coroutines.
+The tracer module provides functionality for capturing responses from functions across multiple languages:
 
+- Python: Using the `capture_response` decorator in `tracer.py`
+- Go: Using the `CaptureResponse` function in the `client` package
+- TypeScript: Using the `captureResponse` function
+
+## Go Usage
+
+### Installation
+
+```bash
+go get github.com/tied-inc/eval-track/tracker-go
+```
+
+### Basic Usage
+
+```go
+package main
+
+import (
+    "github.com/tied-inc/eval-track/tracker-go/pkg/client"
+)
+
+// Define your response struct
+type Response struct {
+    Message string `json:"message"`
+}
+
+func main() {
+    // Create a new tracer client
+    tracer := client.NewTracerClient("http://localhost:8000")
+
+    // Wrap a function that returns (Response, error)
+    wrappedFn := tracer.CaptureResponse(func() (Response, error) {
+        return Response{Message: "Hello"}, nil
+    })
+
+    // Call the wrapped function
+    response, err := wrappedFn()
+    if err != nil {
+        // Handle error
+    }
+}
+```
+
+### Error Handling
+
+```go
+// Function that may return an error
+wrappedFn := tracer.CaptureResponse(func(x int) (Response, error) {
+    if x < 0 {
+        return Response{}, fmt.Errorf("negative input: %d", x)
+    }
+    return Response{Message: fmt.Sprintf("Input: %d", x)}, nil
+})
+
+// The error will be captured in the trace data
+response, err := wrappedFn(-1)
+```
+
+### Features
+
+- Generates unique trace IDs using ULID
+- Supports both successful responses and errors
+- Preserves function signatures using Go's reflection
+- Automatically serializes responses to JSON
+- Thread-safe client implementation
+
+## Python Usage
 
 ## capture_response Decorator
 
