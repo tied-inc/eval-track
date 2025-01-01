@@ -1,9 +1,9 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { captureResponse } from "../src";
-import { TracerClient } from "../src/client";
+import { createTracerClient } from "../src/client";
 
 vi.mock("../src/client", () => ({
-  TracerClient: vi.fn().mockImplementation(() => ({
+  createTracerClient: vi.fn().mockImplementation(() => ({
     sendTrace: vi.fn().mockResolvedValue(undefined),
   })),
 }));
@@ -21,7 +21,7 @@ describe("captureResponse", () => {
     const result = await instance.testMethod(1, 2);
 
     expect(result).toBe(3);
-    expect(TracerClient).toHaveBeenCalled();
+    expect(createTracerClient).toHaveBeenCalled();
   });
 
   it("should capture function errors", async () => {
@@ -34,6 +34,6 @@ describe("captureResponse", () => {
 
     const instance = new TestClass();
     await expect(instance.testMethod()).rejects.toThrow("Test error");
-    expect(TracerClient).toHaveBeenCalled();
+    expect(createTracerClient).toHaveBeenCalled();
   });
 });

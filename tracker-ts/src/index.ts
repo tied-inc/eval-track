@@ -1,18 +1,18 @@
 import { ulid } from "ulid";
-import { TracerClient } from "./client";
-import { Trace } from "./types";
+import { createTracerClient } from "./client";
+import type { Trace } from "./types";
 
-const client = new TracerClient();
+const client = createTracerClient();
 
 export function captureResponse() {
-  return function (
-    target: any,
+  return (
+    target: object,
     propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+    descriptor: PropertyDescriptor,
+  ): PropertyDescriptor => {
     const originalMethod = descriptor.value;
 
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = async function (...args: unknown[]) {
       const trace: Trace = {
         id: ulid(),
         timestamp: Date.now(),
