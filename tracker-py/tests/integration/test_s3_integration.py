@@ -1,9 +1,13 @@
 """Integration tests for S3 storage backend using localstack."""
 
 import os
+import sys
 import pytest
 import boto3
 from botocore.config import Config
+
+# Add tracker package to Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
 from tracker.storage.s3 import S3Storage, StorageError
 
