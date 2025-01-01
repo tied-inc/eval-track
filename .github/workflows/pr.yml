@@ -49,7 +49,41 @@ jobs:
           # Verify package installation
           python -c "from tracker.logging_config import setup_logging; print('Package imported successfully')"
 
-      - name: Start localstack
+      - name: Install and configure AWS CLI
+        run: |
+          echo "Installing AWS CLI..."
+          curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          if [ $? -ne 0 ]; then
+            echo "Failed to download AWS CLI"
+            exit 1
+          fi
+          
+          
+          unzip -q awscliv2.zip
+          if [ $? -ne 0 ]; then
+            echo "Failed to unzip AWS CLI"
+            exit 1
+          fi
+          
+          sudo ./aws/install
+          if [ $? -ne 0 ]; then
+            echo "Failed to install AWS CLI"
+            exit 1
+          fi
+          
+          aws --version
+          if [ $? -ne 0 ]; then
+            echo "AWS CLI installation verification failed"
+            exit 1
+          fi
+          
+          echo "Configuring AWS CLI for LocalStack..."
+          aws configure set aws_access_key_id test
+          aws configure set aws_secret_access_key test
+          aws configure set region us-east-1
+          aws configure set output json
+          
+      - name: Start and verify LocalStack
         run: |
           echo "Pulling LocalStack image..."
           docker pull localstack/localstack:latest
@@ -64,52 +98,63 @@ jobs:
             -e EAGER_SERVICE_LOADING=1 \
             -v "/var/run/docker.sock:/var/run/docker.sock" \
             localstack/localstack:latest
-          
-          echo "Waiting for LocalStack to be ready..."
+            
+          # Wait for LocalStack to be ready and verify S3
           max_attempts=40
-          for i in $(seq 1 $max_attempts); do
-            echo "Attempt $i/$max_attempts: Checking LocalStack status..."
+          attempt=1
+          while [ $attempt -le $max_attempts ]; do
+            echo "Attempt $attempt/$max_attempts: Checking LocalStack status..."
             
             # Check container status
             container_status=$(docker inspect -f '{{.State.Status}}' localstack)
-            echo "Container status: $container_status"
             if [ "$container_status" != "running" ]; then
-              echo "Container is not running! Status: $container_status"
-              docker logs localstack
-              exit 1
+              echo "Container is not running (status: $container_status)"
+              [ $attempt -eq $max_attempts ] && {
+                echo "Container logs:"
+                docker logs localstack
+                exit 1
+              }
+              sleep 5
+              attempt=$((attempt + 1))
+              continue
             fi
             
             # Check service health
-            echo "Checking service health..."
-            health=$(curl -s http://localhost:4566/_localstack/health || echo "Connection failed")
-            echo "Health response: $health"
-            
-            if echo "$health" | grep -q "\"s3\": \"running\""; then
-              echo "LocalStack S3 service is ready!"
-              
-              # S3 is available, let's create a test bucket to verify it's working
-              echo "Creating test bucket..."
-              aws --endpoint-url=http://localhost:4566 s3 mb s3://test-bucket
-              if [ $? -eq 0 ]; then
-                echo "LocalStack S3 service is fully operational!"
-                exit 0
-              else
-                echo "Failed to create test bucket"
-                aws --endpoint-url=http://localhost:4566 s3 ls
+            health_response=$(curl -s http://localhost:4566/_localstack/health)
+            if ! echo "$health_response" | grep -q '"s3": "available"'; then
+              echo "S3 service not ready yet"
+              [ $attempt -eq $max_attempts ] && {
+                echo "Health check failed. Response:"
+                echo "$health_response"
                 exit 1
+              }
+              sleep 5
+              attempt=$((attempt + 1))
+              continue
+            fi
+            
+            # Try to create a test bucket
+            echo "Testing S3 functionality..."
+            if aws --endpoint-url=http://localhost:4566 s3 mb s3://test-bucket; then
+              echo "Successfully created test bucket"
+              # Verify bucket exists
+              if aws --endpoint-url=http://localhost:4566 s3 ls | grep -q "test-bucket"; then
+                echo "Successfully verified test bucket exists"
+                break
               fi
             fi
             
-            echo "Waiting 5 seconds before next attempt..."
+            echo "Failed to create or verify test bucket"
+            [ $attempt -eq $max_attempts ] && {
+              echo "AWS S3 commands failed. Listing buckets:"
+              aws --endpoint-url=http://localhost:4566 s3 ls
+              exit 1
+            }
             sleep 5
+            attempt=$((attempt + 1))
           done
           
-          echo "LocalStack failed to start within $(($max_attempts * 5)) seconds"
-          echo "Container logs:"
-          docker logs localstack
-          echo "Container status:"
-          docker inspect localstack
-          exit 1
+          echo "LocalStack S3 service is fully operational!"
 
       - name: Run code quality checks
         run: |
