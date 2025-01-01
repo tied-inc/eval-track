@@ -3,6 +3,12 @@
 ## Overview
 `eval-track` is a series of LLM-ML observability and tracking services. This series provides APIs for retrieving and storing trace data across multiple programming languages.
 
+Components
+- tracker: data tracking services
+- web: provides API ,and viewer and analyzer of tracked datasets
+- worker: async dataset procedure service that transform non-structured data into structured
+
+
 ## Contents
 
 - [eval-track/tracker-py](./tracker-py/): Python tracker library
@@ -139,7 +145,4 @@ We welcome contributions to the `eval-track` project. To get started, follow the
 4. Run code quality checks:
     ```bash
     task check-all-tracker  # Python checks
-    cd tracker-ts && pnpm lint  # TypeScript checks
-    cd tracker-go && go fmt ./... && go vet ./...  # Go checks
-    cd tracker-rs && cargo fmt && cargo clippy  # Rust checks
     ```

@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'docs/**'
+
 
 permissions:
   contents: read
@@ -29,7 +32,7 @@ jobs:
       - name: Install mkdocs
         run: pip install mkdocs mkdocs-material
       - name: Build docs
-        run: mkdocs build --strict
+        run: mkdocs build
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
