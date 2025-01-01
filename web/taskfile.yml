@@ -1,0 +1,12 @@
+version: '3'
+
+tasks:
+  default:
+    desc: Show help
+    cmds:
+      - task --list
+
+  dev:
+    desc: Start development server
+    cmds:
+      - pnpm dev

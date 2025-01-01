@@ -16,6 +16,9 @@ includes:
   tracker-ts:
     taskfile: ./tracker-ts/taskfile.yml
     dir: ./tracker-ts
+  web:
+    taskfile: ./web/taskfile.yml
+    dir: ./web
 
 tasks:
   default:
