@@ -1,12 +1,40 @@
-import logging
 import time
 from typing import Awaitable, Callable
 
 from fastapi import Request, Response
+from fastapi.responses import JSONResponse
 
+from tracker.logging_config import get_logger, setup_logging
 from tracker.settings import settings
 
-logger = logging.getLogger(__name__)
+# Ensure logging is configured
+setup_logging()
+
+# Get logger for this module
+logger = get_logger(__name__)
+
+
+async def error_handling_middleware(request: Request, call_next: Callable[[Request], Awaitable[Response]]) -> Response:
+    """Global error handling middleware.
+
+    Catches any unhandled exceptions in the request processing pipeline and ensures
+    they are properly logged and returned as JSON responses.
+
+    Args:
+        request: The incoming HTTP request
+        call_next: The next middleware or route handler in the chain
+
+    Returns:
+        Response: Either the normal response or a JSON error response
+    """
+    try:
+        return await call_next(request)
+    except Exception as exc:
+        error_msg = f"Unhandled error processing request: {exc}"
+        logger.error(
+            error_msg, extra={"error_type": type(exc).__name__, "path": request.url.path, "method": request.method}
+        )
+        return JSONResponse(status_code=500, content={"detail": "Internal server error"})
 
 
 async def secret_key_middleware(request: Request, call_next: Callable[[Request], Awaitable[Response]]) -> Response:
@@ -26,7 +54,7 @@ async def secret_key_middleware(request: Request, call_next: Callable[[Request],
     header_key = request.headers.get("x-eval-tracker-secret-key")
 
     if settings.eval_tracker_secret_key and header_key != settings.eval_tracker_secret_key:
-        logging.error("Invalid secret key")
+        logger.error("Invalid secret key", extra={"header_key": "REDACTED"})
         return Response(content="Invalid secret key", status_code=403)
 
     response = await call_next(request)
@@ -54,7 +82,7 @@ async def api_access_log_middleware(request: Request, call_next: Callable[[Reque
         extra={
             "method": request.method,
             "path": request.url.path,
-            "query": request.query_params,
+            "query": str(request.query_params),
         },
     )
     response = await call_next(request)
@@ -67,7 +95,7 @@ async def api_access_log_middleware(request: Request, call_next: Callable[[Reque
         extra={
             "method": request.method,
             "path": request.url.path,
-            "query": request.query_params,
+            "query": str(request.query_params),
             "status_code": response.status_code,
             "elapsed_time_sec": round(elapsed_time, 3),
         },
