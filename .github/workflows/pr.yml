@@ -7,9 +7,6 @@ on:
 jobs:
   build-test:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./tracker-py
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -37,8 +34,8 @@ jobs:
 
       - name: Sync dependencies
         run: |
-          task install-tracker-py
+          task tracker-py:install
 
       - name: Run check-all-tracker
         run: |
-          task check-all-tracker-py
+          task tracker-py:check-all

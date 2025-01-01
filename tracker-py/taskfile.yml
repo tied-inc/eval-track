@@ -1,0 +1,45 @@
+version: '3'
+
+tasks:
+  default:
+    desc: Show help
+    cmds:
+      - task --list
+
+  install:
+    desc: Install dependencies
+    cmds:
+      - uv sync --frozen
+
+  start:
+    desc: Start the tracker app
+    cmds:
+      - uv run uvicorn tracker.main:app --host 0.0.0.0 --port 8080
+
+  check-all:
+    desc: Run all checks
+    cmds:
+      - task format
+      - task check
+      - task mypy
+      # - task test
+
+  format:
+    desc: Format code
+    cmds:
+      - uv run ruff format .
+
+  check:
+    desc: Check code
+    cmds:
+      - uv run ruff check --fix .
+
+  test:
+    desc: Run tests
+    cmds:
+      - uv run pytest tests/
+
+  mypy:
+    desc: Run mypy
+    cmds:
+      - uv run mypy .

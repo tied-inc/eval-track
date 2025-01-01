@@ -1,0 +1,34 @@
+version: '3'
+
+tasks:
+  default:
+    desc: Show help
+    cmds:
+      - task --list
+
+  install:
+    desc: Install dependencies
+    cmds:
+      - pnpm i
+
+  check-all:
+    desc: Run all checks
+    cmds:
+      - task format
+      - task lint
+      - task test
+
+  format:
+    desc: Format code
+    cmds:
+      - pnpm format
+
+  lint:
+    desc: Lint code
+    cmds:
+      - pnpm lint
+
+  test:
+    desc: Run tests
+    cmds:
+      - pnpm test

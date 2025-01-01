@@ -1,0 +1,15 @@
+version: '3'
+
+tasks:
+  default:
+    desc: Show help
+    cmds:
+      - task --list
+
+  check-all:
+    desc: Run all checks
+    cmds:
+      - uv run ruff format .
+      - uv run ruff check --fix .
+      # - uv run mypy .
+      # - uv run pytest tests/ .

@@ -6,9 +6,9 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "vitest",
-    "lint": "biome check ./src ./tests",
-    "format": "biome format --write ./src ./tests",
+    "test": "vitest run",
+    "lint": "biome check --write ",
+    "format": "biome format --write ",
     "type-check": "tsc --noEmit",
     "prepare-lint": "biome install && lint-staged",
     "prepare": "pnpm build"
@@ -18,7 +18,6 @@
   },
   "keywords": ["tracer", "typescript", "eval-track"],
   "author": "tied-inc",
-  "license": "ISC",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@types/node": "^22.10.3",
