@@ -51,6 +51,15 @@ select = [
 [tool.ruff.isort]
 combine-as-imports = true
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "--strict-markers"
+markers = [
+    "asyncio: mark test as async/await test",
+]
+asyncio_mode = "auto"
+
 [tool.coverage.run]
 source = ["tracker"]
 branch = true
