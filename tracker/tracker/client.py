@@ -1,6 +1,6 @@
 import logging
 
-from core.core.session import with_session
+from core.session import with_session
 
 from tracker.prisma_store import PrismaStore
 
