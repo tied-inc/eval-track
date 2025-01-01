@@ -42,6 +42,9 @@ jobs:
 
   check-tracker-ts:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./tracker-ts
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -50,7 +53,6 @@ jobs:
         name: Install pnpm
         with:
           version: 9
-          dest: ./tracker-ts
           run_install: false
 
       - name: Install Node.js
@@ -58,10 +60,9 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
-          cache-dependency-path: './tracker-ts/pnpm-lock.yaml'
 
       - name: Install dependencies
-        run: task tracker-ts:install
+        run: task install
 
       - name: check
-        run: task tracker-ts:check-all
+        run: task check-all
