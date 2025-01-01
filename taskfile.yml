@@ -36,6 +36,12 @@ tasks:
     cmds:
       - docker compose restart
 
+  install:
+    desc: Install package in editable mode
+    cmds:
+      - uv sync --frozen
+      - uv pip install -e .
+
   down:
     desc: Stop the app
     cmds:
