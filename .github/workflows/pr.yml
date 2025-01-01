@@ -35,22 +35,44 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-uv-
 
-      - name: Setup virtual environment and install dependencies
+      - name: Setup virtual environment and install package
         run: |
           python -m pip install --upgrade pip
           python -m pip install uv
           uv venv
           source .venv/bin/activate
+          # Install the package first in editable mode
+          pip install -e .
+          # Then install dependencies
           task install-tracker
           uv pip install pytest-asyncio
+          # Verify package installation
+          python -c "from tracker.logging_config import setup_logging; print('Package imported successfully')"
 
       - name: Start localstack
         run: |
           docker pull localstack/localstack:latest
-          docker run -d --name localstack -p 4566:4566 -e SERVICES=s3 -e DEFAULT_REGION=us-east-1 localstack/localstack:latest
+          docker run -d --name localstack -p 4566:4566 \
+            -e SERVICES=s3 \
+            -e DEFAULT_REGION=us-east-1 \
+            -e AWS_ACCESS_KEY_ID=test \
+            -e AWS_SECRET_ACCESS_KEY=test \
+            -e DEBUG=1 \
+            localstack/localstack:latest
           echo "Waiting for localstack to be ready..."
-          timeout 30 bash -c 'until curl -s http://localhost:4566/_localstack/health | grep -q "\"s3\": \"running\""; do sleep 1; done'
-          echo "Localstack is ready"
+          for i in {1..60}; do
+            echo "Attempt $i: Checking localstack health..."
+            health=$(curl -s http://localhost:4566/_localstack/health)
+            echo "Health response: $health"
+            if echo "$health" | grep -q "\"s3\": \"running\""; then
+              echo "Localstack is ready"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Localstack failed to start within 120 seconds"
+          docker logs localstack
+          exit 1
 
       - name: Run code quality checks
         run: |
@@ -62,12 +84,20 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          task test-tracker
+          echo "Python path: $PYTHONPATH"
+          echo "Current directory: $(pwd)"
+          echo "Directory contents:"
+          ls -R
+          echo "Installed packages:"
+          pip list
+          echo "Running tests..."
+          PYTHONPATH=$PYTHONPATH:$(pwd) task test-tracker
           if [ $? -ne 0 ]; then
             echo "Tests failed"
             exit 1
           fi
-          task coverage-tracker
+          echo "Running coverage..."
+          PYTHONPATH=$PYTHONPATH:$(pwd) task coverage-tracker
           if [ $? -ne 0 ]; then
             echo "Coverage checks failed"
             exit 1
