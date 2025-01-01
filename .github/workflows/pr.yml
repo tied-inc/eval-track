@@ -50,6 +50,7 @@ jobs:
         name: Install pnpm
         with:
           version: 9
+          dest: ./tracker-ts
           run_install: false
 
       - name: Install Node.js
