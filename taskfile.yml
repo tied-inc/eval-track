@@ -4,6 +4,9 @@ includes:
   example:
     taskfile: ./example/taskfile.yml
     dir: ./example
+  tracker-go:
+    taskfile: ./tracker-go/taskfile.yml
+    dir: ./tracker-go
   tracker-py:
     taskfile: ./tracker-py/taskfile.yml
     dir: ./tracker-py

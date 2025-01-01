@@ -81,8 +81,8 @@ func TestSendTrace(t *testing.T) {
 			// Create test trace
 			tr := &trace.Trace{
 				FunctionName: "test_function",
-				Args:        []interface{}{"arg1", 42},
-				Response:    "test response",
+				Args:         []interface{}{"arg1", 42},
+				Response:     "test response",
 			}
 
 			// Send trace

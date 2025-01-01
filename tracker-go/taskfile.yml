@@ -1,0 +1,28 @@
+version: '3'
+
+tasks:
+  default:
+    desc: Show help
+    cmds:
+      - task --list
+
+  install:
+    desc: Install dependencies
+    cmds:
+      - go mod tidy
+
+  check-all:
+    desc: Run all checks
+    cmds:
+      - task format
+      - task test
+
+  format:
+    desc: Format code
+    cmds:
+      - go fmt ./pkg/...
+
+  test:
+    desc: Run tests
+    cmds:
+      - go test ./pkg/...
