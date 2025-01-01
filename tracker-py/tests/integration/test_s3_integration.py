@@ -2,8 +2,9 @@
 
 import os
 import sys
-import pytest
+
 import boto3
+import pytest
 from botocore.config import Config
 from pydantic import SecretStr
 
@@ -43,13 +44,13 @@ def s3_storage(monkeypatch, s3_bucket):
     monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "test")
     monkeypatch.setenv("AWS_DEFAULT_REGION", "us-east-1")
     monkeypatch.setenv("S3_BUCKET", s3_bucket)
-    
+
     # Override settings for testing
     monkeypatch.setattr("tracker.settings.settings.s3_bucket", s3_bucket)
     monkeypatch.setattr("tracker.settings.settings.s3_region", "us-east-1")
     monkeypatch.setattr("tracker.settings.settings.s3_access_key", SecretStr("test"))
     monkeypatch.setattr("tracker.settings.settings.s3_secret_key", SecretStr("test"))
-    
+
     return S3Storage()
 
 
@@ -83,14 +84,14 @@ def test_integration_invalid_bucket(monkeypatch):
     monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "test")
     monkeypatch.setenv("AWS_DEFAULT_REGION", "us-east-1")
     monkeypatch.setenv("S3_BUCKET", "nonexistent-bucket")
-    
+
     # Override settings for testing
     monkeypatch.setattr("tracker.settings.settings.s3_bucket", "nonexistent-bucket")
     monkeypatch.setattr("tracker.settings.settings.s3_region", "us-east-1")
     monkeypatch.setattr("tracker.settings.settings.s3_access_key", SecretStr("test"))
     monkeypatch.setattr("tracker.settings.settings.s3_secret_key", SecretStr("test"))
-    
+
     # Should raise StorageError during initialization since bucket doesn't exist
     with pytest.raises(StorageError) as exc_info:
-        storage = S3Storage()
+        _ = S3Storage()  # Initialize but don't store reference since we won't use it
     assert "Not Found" in str(exc_info.value)
