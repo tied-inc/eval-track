@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from pydantic import BaseModel
 from tracker.router import router
 from tracker.tracer import capture_response
@@ -6,7 +6,6 @@ from tracker.client import EvalTrackClient
 from uvicorn import run
 import httpx
 from httpx import Response
-from typing import Union, List
 import asyncio
 
 
@@ -33,9 +32,7 @@ async def service1() -> ServiceResponse:
     """First microservice endpoint."""
     await asyncio.sleep(0.1)  # Simulate processing
     return ServiceResponse(
-        service_name="service1",
-        message="Service 1 processed request",
-        status="success"
+        service_name="service1", message="Service 1 processed request", status="success"
     )
 
 
@@ -45,9 +42,7 @@ async def service2() -> ServiceResponse:
     """Second microservice endpoint."""
     await asyncio.sleep(0.2)  # Simulate processing
     return ServiceResponse(
-        service_name="service2",
-        message="Service 2 processed request",
-        status="success"
+        service_name="service2", message="Service 2 processed request", status="success"
     )
 
 
@@ -59,11 +54,11 @@ async def orchestrate() -> OrchestrationResponse:
         # Parallel service calls
         tasks = [
             http_client.get("http://localhost:8000/service1"),
-            http_client.get("http://localhost:8000/service2")
+            http_client.get("http://localhost:8000/service2"),
         ]
-        
+
         responses = await asyncio.gather(*tasks, return_exceptions=True)
-        
+
         services = []
         for i, response in enumerate(responses):
             service_name = f"service{i+1}"
@@ -76,26 +71,28 @@ async def orchestrate() -> OrchestrationResponse:
                         ServiceResponse(
                             service_name=service_name,
                             message=f"Failed to parse response: {str(e)}",
-                            status="error"
+                            status="error",
                         )
                     )
             else:
-                error_message = str(response) if isinstance(response, Exception) else "Unknown error"
+                error_message = (
+                    str(response)
+                    if isinstance(response, Exception)
+                    else "Unknown error"
+                )
                 services.append(
                     ServiceResponse(
-                        service_name=service_name,
-                        message=error_message,
-                        status="error"
+                        service_name=service_name, message=error_message, status="error"
                     )
                 )
-        
+
         # Get all traces for demonstration
         traces = client.get_traces()
-        
+
         return OrchestrationResponse(
             request_id="demo-123",
             services=services,
-            summary=f"Orchestrated {len(services)} services. Traces collected: {len(traces)}"
+            summary=f"Orchestrated {len(services)} services. Traces collected: {len(traces)}",
         )
 
 

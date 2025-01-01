@@ -13,10 +13,12 @@ The Advanced FastAPI Usage example showcases more sophisticated integration patt
 git clone https://github.com/tied-inc/eval-track
 
 # Navigate to the example directory
-cd example/advanced-fastapi-usage
+cd example
 
 # Install dependencies
 uv sync --frozen
+
+cd advanced-fastapi-usage
 
 # Run the application
 uv main:app
@@ -64,18 +66,18 @@ async def process_text(request: ProcessingRequest, background_tasks: BackgroundT
     try:
         # Simulate async processing
         result = await process_text_async(request.text)
-        
+
         # Handle options if provided
         processed_options = await process_options(request.options) if request.options else None
-        
+
         response = ProcessingResponse(
             result=result,
             processed_options=processed_options
         )
-        
+
         # Add background task for additional processing
         background_tasks.add_task(store_processing_result, response)
-        
+
         return response
     except Exception as e:
         # Error handling with proper status codes

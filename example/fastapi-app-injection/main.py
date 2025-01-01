@@ -9,5 +9,6 @@ def main() -> None:
 
     run(app)
 
+
 if __name__ == "__main__":
     main()

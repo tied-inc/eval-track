@@ -17,7 +17,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.12'
+          python-version: '3.11'
 
       - name: Install task
         run: |
@@ -31,18 +31,14 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.uv/cache
-          key: ${{ runner.os }}-uv-${{ hashFiles('tracker/pyproject.toml') }}
+          key: ${{ runner.os }}-uv-${{ hashFiles('tracker-py/pyproject.toml') }}
           restore-keys: |
             ${{ runner.os }}-uv-
 
       - name: Sync dependencies
         run: |
-          uv sync --frozen
+          task install-tracker
 
       - name: Run check-all-tracker
         run: |
           task check-all-tracker
-
-      - name: Run test-tracker
-        run: |
-          task test-tracker

@@ -5,7 +5,7 @@
 
 ## Contents
 
-- [eval-track/tracker](./tracker/): Python tracker library for FastAPI
+- [eval-track/tracker-py](./tracker-py/): Python tracker library
 - [Documentation](./docs/): Project documentation using MkDocs
 
 ## Documentation
@@ -55,12 +55,7 @@ We welcome contributions to the `eval-track` project. To get started, follow the
     task start-tracker-app
     ```
 
-4. Run tests:
-    ```sh
-    task test-tracker
-    ```
-
-5. Format code:
-    ```sh
-    task check-all-tracker
+4. Checkall
+    ```bash
+    task check-all-tracker-py
     ```
