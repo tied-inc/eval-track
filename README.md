@@ -1,7 +1,7 @@
 # eval-track
 
 ## Overview
-`eval-track` is a series of LLM-ML observability and tracking services. This series provides APIs for retrieving and storing trace data.
+`eval-track` is a series of LLM-ML observability and tracking services. This series provides APIs for retrieving and storing trace data across multiple programming languages.
 
 Components
 - tracker: data tracking services
@@ -11,14 +11,89 @@ Components
 
 ## Contents
 
+- [eval-track/tracker-py](./tracker-py/): Python tracker library
+- [eval-track/tracker-ts](./tracker-ts/): TypeScript tracker library
+- [eval-track/tracker-go](./tracker-go/): Go tracker library
+- [eval-track/tracker-rs](./tracker-rs/): Rust tracker library
 - [Documentation](./docs/): Project documentation using MkDocs
 
-### Trackers 
+## Development Setup
 
-- [eval-track/tracker-py](./tracker-py/): Tracker for python
-- [eval-track/tracker-go](./tracker-go/): Tracker for golang
-- [eval-track/tracker-ts](./tracker-ts/): Tracker for node
+### Prerequisites
 
+- Python 3.8+ with [uv](https://github.com/astral-sh/uv)
+- Node.js 18+ with [pnpm](https://pnpm.io/)
+- Go 1.20+
+- Rust with Cargo
+- [Task](https://taskfile.dev/) for running development commands
+
+### Installation
+
+1. Install Task (if not already installed):
+    ```sh
+    npm install -g @go-task/cli
+    ```
+
+2. Set up Python environment:
+    ```sh
+    task setup-uv  # if uv not installed
+    task install-tracker
+    ```
+
+3. Install TypeScript dependencies:
+    ```sh
+    cd tracker-ts
+    pnpm install
+    ```
+
+4. Install Go dependencies:
+    ```sh
+    cd tracker-go
+    go mod download
+    ```
+
+5. Install Rust dependencies:
+    ```sh
+    cd tracker-rs
+    cargo build
+    ```
+
+### Testing
+
+Run tests for each implementation:
+
+```sh
+# Python tests
+task test-tracker
+uv run pytest tests/
+
+# TypeScript tests
+cd tracker-ts && pnpm test
+
+# Go tests
+cd tracker-go && go test ./...
+
+# Rust tests
+cd tracker-rs && cargo test
+```
+
+### Code Quality
+
+Format and lint the code:
+
+```sh
+# Python
+task check-all-tracker  # Runs ruff format, ruff check, and mypy
+
+# TypeScript
+cd tracker-ts && pnpm lint
+
+# Go
+cd tracker-go && go fmt ./... && go vet ./...
+
+# Rust
+cd tracker-rs && cargo fmt && cargo clippy
+```
 
 ## Documentation
 
@@ -67,7 +142,7 @@ We welcome contributions to the `eval-track` project. To get started, follow the
     task start-tracker-app
     ```
 
-4. Checkall
+4. Run code quality checks:
     ```bash
-    task check-all-tracker-py
+    task check-all-tracker  # Python checks
     ```

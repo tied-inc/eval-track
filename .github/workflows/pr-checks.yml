@@ -1,0 +1,81 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'tracker-py/**'
+      - 'tracker-ts/**'
+      - 'tracker-go/**'
+      - 'tracker-rs/**'
+      - '.github/workflows/**'
+
+jobs:
+  python-checks:
+    if: contains(github.event.pull_request.changed_files, 'tracker-py/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          pip install uv
+          uv pip install ruff mypy
+          cd tracker-py && uv pip install -e ".[dev]"
+      - name: Run ruff format check
+        run: cd tracker-py && ruff format --check .
+      - name: Run ruff check
+        run: cd tracker-py && ruff check .
+      - name: Run mypy
+        run: cd tracker-py && mypy .
+
+  typescript-checks:
+    if: contains(github.event.pull_request.changed_files, 'tracker-ts/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - name: Install dependencies
+        run: cd tracker-ts && pnpm install
+      - name: Run biome checks
+        run: cd tracker-ts && pnpm lint
+      - name: Run tests
+        run: cd tracker-ts && pnpm test
+
+  go-checks:
+    if: contains(github.event.pull_request.changed_files, 'tracker-go/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
+      - name: Run go fmt
+        run: cd tracker-go && test -z $(go fmt ./...)
+      - name: Run go vet
+        run: cd tracker-go && go vet ./...
+      - name: Run tests
+        run: cd tracker-go && go test ./...
+
+  rust-checks:
+    if: contains(github.event.pull_request.changed_files, 'tracker-rs/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          components: rustfmt, clippy
+      - name: Run cargo fmt
+        run: cd tracker-rs && cargo fmt -- --check
+      - name: Run cargo clippy
+        run: cd tracker-rs && cargo clippy -- -D warnings
+      - name: Run tests
+        run: cd tracker-rs && cargo test

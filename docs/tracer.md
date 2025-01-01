@@ -171,6 +171,88 @@ For more detailed information and advanced usage examples, see the [TypeScript t
 
 For more detailed information and advanced usage examples, see the [Go tracer README](../tracker-go/README.md).
 
+## Rust Usage
+
+### Installation
+
+```bash
+cargo add eval-track-rust --git https://github.com/tied-inc/eval-track
+```
+
+### Basic Usage
+
+```rust
+use eval_track_rust::{capture_response, init_tracer};
+
+// Initialize the tracer
+init_tracer("http://localhost:8000");
+
+// Define your response type
+#[derive(serde::Serialize, serde::Deserialize)]
+struct Response {
+    message: String,
+}
+
+// Use the capture_response attribute
+#[capture_response]
+fn get_data() -> Response {
+    Response {
+        message: String::from("Hello from Rust!")
+    }
+}
+
+// Async function support
+#[capture_response]
+async fn get_data_async() -> Response {
+    Response {
+        message: String::from("Hello from async Rust!")
+    }
+}
+```
+
+### Error Handling
+
+```rust
+use eval_track_rust::{capture_response, TracerError};
+
+#[capture_response]
+fn risky_operation() -> Result<Response, TracerError> {
+    if some_condition {
+        Err(TracerError::OperationFailed("Operation failed".into()))
+    } else {
+        Ok(Response {
+            message: String::from("Success!")
+        })
+    }
+}
+```
+
+### Features
+
+- Generates unique trace IDs using ULID
+- Supports both synchronous and asynchronous functions via procedural macro
+- Uses thiserror for robust error handling
+- Thread-safe global tracer client
+- Automatic serialization using serde
+- Support for Result types and custom errors
+
+### Internal Operation
+
+1. The `capture_response` procedural macro generates wrapper code at compile time
+2. Each function call generates a unique trace ID using ULID
+3. The function is executed and its return value or error is captured
+4. Trace data is sent to the server asynchronously
+5. Original return value or error is passed through unchanged
+
+### Limitations
+
+- Return values must implement serde::Serialize
+- Error types must implement std::error::Error
+- Trace data storage is asynchronous and may not complete immediately
+- Network errors during trace storage are logged but don't affect the wrapped function
+
+For more detailed information and advanced usage examples, see the [Rust tracer README](../tracker-rs/README.md).
+
 ## Python Usage
 
 ## capture_response Decorator
