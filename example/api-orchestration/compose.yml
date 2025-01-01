@@ -3,12 +3,12 @@ version: "3"
 services:
   tracker:
     build:
-      context: ../../tracker
+      context: ../../tracker-py
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
     volumes:
-      - ../../tracker:/app
+      - ../../tracker-py:/app
 
   app:
     build:

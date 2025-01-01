@@ -13,10 +13,12 @@ The API Orchestration example shows how to implement trace collection and monito
 git clone https://github.com/tied-inc/eval-track
 
 # Navigate to the example directory
-cd example/api-orchestration
+cd example
 
 # Install dependencies
 uv sync --frozen
+
+cd api-orchestration
 
 # Run the application
 uv main:app
@@ -110,15 +112,15 @@ async def orchestrate() -> OrchestrationResponse:
             client.get("http://localhost:8000/service1"),
             client.get("http://localhost:8000/service2")
         ]
-        
+
         start_time = time.time()
         responses = await asyncio.gather(*tasks, return_exceptions=True)
         total_time = time.time() - start_time
-        
+
         # Process responses
         services = []
         success_count = 0
-        
+
         for response in responses:
             if isinstance(response, Exception):
                 services.append(
@@ -133,7 +135,7 @@ async def orchestrate() -> OrchestrationResponse:
                 services.append(ServiceResponse(**service_data))
                 if service_data["status"] == "success":
                     success_count += 1
-        
+
         return OrchestrationResponse(
             services=services,
             total_time=total_time,

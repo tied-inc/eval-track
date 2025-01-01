@@ -13,10 +13,12 @@ The FastAPI injection example shows the simplest way to add eval-track's tracing
 git clone https://github.com/tied-inc/eval-track
 
 # Navigate to the example directory
-cd example/fastapi-app-injection
+cd example
 
 # Install dependencies
 uv sync --frozen
+
+cd fastapi-app-injection
 
 # Run the application
 uv main:app
@@ -35,7 +37,7 @@ def main() -> None:
     app = FastAPI()
     # Include the eval-track router in your FastAPI application
     app.include_router(router)
-    
+
     run(app)
 ```
 
@@ -45,10 +47,10 @@ After including the router, your application will have access to the following e
 
 - `GET /eval-track/health`
   - Health check endpoint for the eval-track service
-  
+
 - `GET /eval-track/traces`
   - Retrieve all stored traces
-  
+
 - `PUT /eval-track/traces/{trace_id}`
   - Store trace data for a specific trace ID
 

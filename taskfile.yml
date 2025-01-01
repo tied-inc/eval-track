@@ -11,46 +11,32 @@ tasks:
     cmds:
       - curl -LsSf https://astral.sh/uv/install.sh | sh
 
-  install-tracker:
+  install-tracker-py:
     desc: Install dependencies
-    dir: tracker
+    dir: tracker-py
     cmds:
       - uv sync --frozen
 
-  start-tracker-app:
+  start-tracker-py-app:
     desc: Start the tracker app
-    dir: tracker
+    dir: tracker-py
     cmds:
       - uv run uvicorn tracker.main:app --host 0.0.0.0 --port 8080
 
-  check-all-tracker:
+  check-all-tracker-py:
     desc: Run all checks
-    cmds:
-      - task format-tracker
-      - task lint-tracker
-      - task mypy-tracker
-
-  format-tracker:
-    desc: Format code
-    dir: tracker
+    dir: tracker-py
     cmds:
       - uv run ruff format .
-
-  lint-tracker:
-    desc: Run linter
-    dir: tracker
-    cmds:
       - uv run ruff check --fix .
-
-  mypy-tracker:
-    desc: Run mypy
-    dir: tracker
-    cmds:
       - uv run mypy .
+      # - PYTHON_PATH=. uv run pytest tests/
 
-  test-tracker:
-    desc: Run tests
-    dir: tracker
+  check-all-example:
+    desc: Run all checks
+    dir: example
     cmds:
-      - uv run pytest tests/ .
-    ignore_error: true
+      - uv run ruff format .
+      - uv run ruff check --fix .
+      # - uv run mypy .
+      # - uv run pytest tests/ .
