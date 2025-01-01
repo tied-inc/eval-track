@@ -1,7 +1,8 @@
-# この Pull Request で何をするか
-<!-- ここに今回の変更内容を簡潔に記載してください -->
+# What this Pull Request does
+<!-- Please provide a brief description of the changes in this PR -->
 
-# 関連 Issue
-<!-- Issue と自動紐付けしたい場合は以下のように表記すると良いです -->
-<!-- Fixes #<issue番号> -->
-<!-- 紐付けのみで Issue を自動的に閉じたくない場合は、"References #<issue番号>" を使用してください -->
+# Related Issues
+<!-- To automatically link and close an issue, use: -->
+<!-- Fixes #<issue_number> -->
+<!-- To link without closing the issue, use: -->
+<!-- References #<issue_number> -->
