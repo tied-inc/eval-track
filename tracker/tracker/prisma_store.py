@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 from core.session import with_session
+
 from tracker.entity import Trace
 
 

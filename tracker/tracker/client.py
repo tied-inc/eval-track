@@ -15,16 +15,18 @@ class EvalTrackClient:
         logger.info("Getting traces from database")
         try:
             traces = await self.store.get_traces()
-            return {"traces": [
-                {
-                    "id": trace.id,
-                    "request": trace.request,
-                    "response": trace.response,
-                    "created_at": trace.created_at,
-                    "updated_at": trace.updated_at,
-                }
-                for trace in traces
-            ]}
+            return {
+                "traces": [
+                    {
+                        "id": trace.id,
+                        "request": trace.request,
+                        "response": trace.response,
+                        "created_at": trace.created_at,
+                        "updated_at": trace.updated_at,
+                    }
+                    for trace in traces
+                ]
+            }
         except Exception:
             logger.error("Failed to get traces from database")
             return {"traces": []}
