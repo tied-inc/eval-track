@@ -1,21 +1,21 @@
-# Client モジュール
+# Client Module
 
-`client.py` には、トレース操作を行うための `EvalTrackClient` クラスが定義されています。
+`client.py` defines the `EvalTrackClient` class for trace operations.
 
-## EvalTrackClient クラス
+## EvalTrackClient Class
 
-トレースデータの取得と保存を行うためのクライアントクラス。
+A client class for retrieving and storing trace data.
 
-### メソッド
+### Methods
 
 #### get_traces()
-トレースデータを取得します。
+Retrieves trace data.
 
-**戻り値**:
-- `dict`: 取得したトレースデータ
-  - エラー時は空の辞書 `{}` を返します
+**Returns**:
+- `dict`: Retrieved trace data
+  - Returns an empty dictionary `{}` on error
 
-**使用例**:
+**Example**:
 ```python
 from tracker.client import EvalTrackClient
 
@@ -24,16 +24,16 @@ traces = client.get_traces()
 ```
 
 #### put_trace(trace_id: str, data: dict)
-トレースデータを保存します。
+Stores trace data.
 
-**引数**:
-- `trace_id` (str): トレースの一意識別子
-- `data` (dict): 保存するトレースデータ
+**Parameters**:
+- `trace_id` (str): Unique identifier for the trace
+- `data` (dict): Trace data to store
 
-**戻り値**:
+**Returns**:
 - `None`
 
-**使用例**:
+**Example**:
 ```python
 from tracker.client import EvalTrackClient
 
@@ -41,6 +41,6 @@ client = EvalTrackClient()
 client.put_trace("trace-123", {"request": "...", "response": "..."})
 ```
 
-### エラーハンドリング
-- HTTP リクエストが失敗した場合（ステータスコードが 200 以外）はエラーログを出力
-- 予期せぬエラーが発生した場合もエラーログを出力
+### Error Handling
+- Outputs error logs when HTTP requests fail (status code other than 200)
+- Outputs error logs for unexpected errors

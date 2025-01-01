@@ -1,22 +1,22 @@
-# eval-track ドキュメント
+# eval-track Documentation
 
-`eval-track` は LLM-ML の可観測性とトラッキングサービスを提供するライブラリです。このドキュメントでは、主要なコンポーネントの使い方と機能について説明します。
+`eval-track` is a library that provides observability and tracking services for LLM-ML. This documentation explains the usage and functionality of the main components.
 
-## 主要コンポーネント
+## Main Components
 
 ### [Client](client.md)
-トレースデータの取得と保存を行うクライアントクラス。
+Client class for retrieving and storing trace data.
 
 ### [Tracer](tracer.md)
-関数やコルーチンの応答をキャプチャするデコレーター。
+Decorator for capturing function and coroutine responses.
 
 ### [Router](router.md)
-トレースデータの API エンドポイント。
+API endpoints for trace data.
 
-## インストール方法
+## Installation
 
 ```bash
 uv pip install "git+https://github.com/tied-inc/eval-track/tracker"
 ```
 
-詳細な使用方法は各コンポーネントのドキュメントを参照してください。
+For detailed usage instructions, please refer to each component's documentation.

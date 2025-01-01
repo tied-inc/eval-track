@@ -1,46 +1,46 @@
-# Router モジュール
+# Router Module
 
-`router.py` には、トレースデータの API エンドポイントが定義されています。
+`router.py` defines the API endpoints for trace data.
 
-## API エンドポイント
+## API Endpoints
 
 ### GET /eval-track/health
-ヘルスチェックエンドポイント。
+Health check endpoint.
 
 
-**レスポンス**:
-- `200 OK`: サービスが正常に動作している場合
-- レスポンスボディ: `"OK"`
+**Response**:
+- `200 OK`: When the service is operating normally
+- Response body: `"OK"`
 
 ### GET /eval-track/traces
-トレースデータ取得エンドポイント。
+Endpoint for retrieving trace data.
 
-**レスポンス**:
-- `200 OK`: トレースデータの取得に成功した場合
-- レスポンスボディ: `{"message": "Logs endpoint"}`
+**Response**:
+- `200 OK`: When trace data is successfully retrieved
+- Response body: `{"message": "Logs endpoint"}`
 
 ### PUT /eval-track/traces/{trace_id}
-トレースデータ保存エンドポイント。
+Endpoint for storing trace data.
 
-**パスパラメータ**:
-- `trace_id` (str): トレースの一意識別子
+**Path Parameters**:
+- `trace_id` (str): Unique identifier for the trace
 
-**リクエストボディ**:
-- `data` (dict): 保存するトレースデータ
+**Request Body**:
+- `data` (dict): Trace data to store
 
-**レスポンス**:
-- `204 No Content`: トレースデータの保存に成功した場合
-- レスポンスボディ: なし
+**Response**:
+- `204 No Content`: When trace data is successfully stored
+- Response body: None
 
-## ロギング
+## Logging
 
-各エンドポイントは以下のようなログを出力します:
+Each endpoint outputs the following logs:
 
-- ヘルスチェック: "Health check endpoint called"
-- トレース取得: "Logs retrieval endpoint called"
-- トレース保存: "Received logs with traceId: {trace_id}"
+- Health check: "Health check endpoint called"
+- Trace retrieval: "Logs retrieval endpoint called"
+- Trace storage: "Received logs with traceId: {trace_id}"
 
-## 設定
+## Configuration
 
-- ルーターのプレフィックスは `/eval-track` に設定されています
-- ロギングは NullHandler を使用して設定されています
+- Router prefix is set to `/eval-track`
+- Logging is configured using NullHandler

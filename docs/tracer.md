@@ -1,12 +1,13 @@
-# Tracer モジュール
+# Tracer Module
 
-`tracer.py` には、関数やコルーチンの応答をキャプチャするための `capture_response` デコレーターが定義されています。
+`tracer.py` defines the `capture_response` decorator for capturing responses from functions and coroutines.
 
-## capture_response デコレーター
 
-関数やコルーチンの戻り値を自動的にトレースデータとして記録するデコレーター。同期関数と非同期関数の両方に対応しています。
+## capture_response Decorator
 
-### 使用方法
+A decorator that automatically records function return values as trace data. Supports both synchronous and asynchronous functions.
+
+### Usage
 
 ```python
 from tracker.tracer import capture_response
@@ -24,26 +25,26 @@ def sync_function() -> Response:
     return Response(message="World")
 ```
 
-### 機能詳細
+### Features
 
-- ULID を使用して一意のトレース ID を生成
-- FastAPI の BackgroundTasks を使用して非同期でトレースデータを保存
-- 関数の戻り値は Pydantic の BaseModel である必要があります
-- 元の関数のシグネチャと属性は @wraps によって保持されます
+- Generates unique trace IDs using ULID
+- Uses FastAPI's BackgroundTasks for asynchronous trace data storage
+- Function return values must be Pydantic BaseModel instances
+- Original function signatures and attributes are preserved using @wraps
 
-### 内部動作
+### Internal Operation
 
-1. デコレーターが適用されると、一意のトレース ID が生成されます
-2. 関数が実行され、その戻り値が取得されます
-3. BackgroundTasks を使用して、トレースデータが非同期で保存されます
-4. 元の戻り値がそのまま返されます
+1. When the decorator is applied, a unique trace ID is generated
+2. The function is executed and its return value is captured
+3. Trace data is stored asynchronously using BackgroundTasks
+4. The original return value is passed through unchanged
 
-### 対応している関数の種類
+### Supported Function Types
 
-- 同期関数 (`def` で定義された通常の関数)
-- 非同期関数 (`async def` で定義されたコルーチン)
+- Synchronous functions (defined with `def`)
+- Asynchronous functions (defined with `async def`)
 
-### 制限事項
+### Limitations
 
-- 戻り値は必ず Pydantic の BaseModel を継承したクラスのインスタンスである必要があります
-- トレースデータの保存は非同期で行われるため、即座には完了しない可能性があります
+- Return values must be instances of classes that inherit from Pydantic's BaseModel
+- Trace data storage is asynchronous and may not complete immediately
