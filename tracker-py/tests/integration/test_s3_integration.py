@@ -77,8 +77,20 @@ def test_integration_get_nonexistent(s3_storage):
 
 def test_integration_invalid_bucket(monkeypatch):
     """Test error handling with invalid bucket."""
+    # Set environment variables for S3 configuration
+    monkeypatch.setenv("AWS_ENDPOINT_URL", "http://localhost:4566")
+    monkeypatch.setenv("AWS_ACCESS_KEY_ID", "test")
+    monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "test")
+    monkeypatch.setenv("AWS_DEFAULT_REGION", "us-east-1")
     monkeypatch.setenv("S3_BUCKET", "nonexistent-bucket")
-    storage = S3Storage()
     
-    with pytest.raises(StorageError):
-        storage.upload_log("test-key", b"test data")
+    # Override settings for testing
+    monkeypatch.setattr("tracker.settings.settings.s3_bucket", "nonexistent-bucket")
+    monkeypatch.setattr("tracker.settings.settings.s3_region", "us-east-1")
+    monkeypatch.setattr("tracker.settings.settings.s3_access_key", SecretStr("test"))
+    monkeypatch.setattr("tracker.settings.settings.s3_secret_key", SecretStr("test"))
+    
+    # Should raise StorageError during initialization since bucket doesn't exist
+    with pytest.raises(StorageError) as exc_info:
+        storage = S3Storage()
+    assert "Not Found" in str(exc_info.value)
