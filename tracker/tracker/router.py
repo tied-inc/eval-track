@@ -1,10 +1,12 @@
-import logging
-
 from fastapi import APIRouter
 
-logging.getLogger(__name__).addHandler(logging.NullHandler())
+from tracker.logging_config import get_logger, setup_logging
+
+# Ensure logging is configured
+setup_logging()
+
 router = APIRouter(prefix="/eval-track")
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 @router.get("/health")
