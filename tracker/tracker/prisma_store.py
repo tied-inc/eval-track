@@ -1,8 +1,67 @@
+from abc import ABC, abstractmethod
 from typing import Dict, List, Optional
 
 from core.core.session import with_session
 
-from tracker.db import TraceStore
+
+class TraceStore(ABC):
+    """Abstract base class for trace storage implementations.
+
+    This class defines the interface for storing and retrieving traces.
+    It is designed specifically for trace operations and provides a clean
+    abstraction for trace-specific storage operations.
+
+    Example:
+        ```python
+        class MyTraceStore(TraceStore):
+            async def put_trace(self, trace_id: str, data: dict) -> None:
+                # Implementation
+                pass
+        ```
+    """
+
+    @abstractmethod
+    async def put_trace(self, trace_id: str, data: dict) -> None:
+        """Store a trace with the given ID.
+
+        Args:
+            trace_id: The unique identifier for the trace
+            data: The trace data containing request and response information
+        """
+        pass
+
+    @abstractmethod
+    async def get_trace(self, trace_id: str) -> Optional[Dict]:
+        """Retrieve a trace by ID.
+
+        Args:
+            trace_id: The unique identifier for the trace
+
+        Returns:
+            The trace data if found, None otherwise
+        """
+        pass
+
+    @abstractmethod
+    async def get_traces(self, limit: int = 100) -> List[Dict]:
+        """Retrieve multiple traces.
+
+        Args:
+            limit: Maximum number of traces to retrieve (default: 100)
+
+        Returns:
+            List of trace data dictionaries
+        """
+        pass
+
+    @abstractmethod
+    async def find_traces_with_artifacts(self) -> List[Dict]:
+        """Find traces that have associated artifacts.
+
+        Returns:
+            List of trace data dictionaries including their artifacts
+        """
+        pass
 
 
 class PrismaStore(TraceStore):
