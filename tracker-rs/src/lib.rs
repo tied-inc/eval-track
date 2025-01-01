@@ -2,7 +2,6 @@ pub mod client;
 pub mod error;
 pub mod types;
 
-use client::TracerClient;
 use once_cell::sync::OnceCell;
 use std::cell::RefCell;
 use std::sync::Arc;
