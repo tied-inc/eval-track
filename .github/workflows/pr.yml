@@ -51,27 +51,62 @@ jobs:
 
       - name: Start localstack
         run: |
+          echo "Pulling LocalStack image..."
           docker pull localstack/localstack:latest
+          
+          echo "Starting LocalStack container..."
           docker run -d --name localstack -p 4566:4566 \
             -e SERVICES=s3 \
             -e DEFAULT_REGION=us-east-1 \
             -e AWS_ACCESS_KEY_ID=test \
             -e AWS_SECRET_ACCESS_KEY=test \
             -e DEBUG=1 \
+            -e DOCKER_HOST=unix:///var/run/docker.sock \
+            -e EAGER_SERVICE_LOADING=1 \
             localstack/localstack:latest
-          echo "Waiting for localstack to be ready..."
-          for i in {1..60}; do
-            echo "Attempt $i: Checking localstack health..."
-            health=$(curl -s http://localhost:4566/_localstack/health)
-            echo "Health response: $health"
-            if echo "$health" | grep -q "\"s3\": \"running\""; then
-              echo "Localstack is ready"
-              exit 0
+          
+          echo "Waiting for LocalStack to be ready..."
+          max_attempts=40
+          for i in $(seq 1 $max_attempts); do
+            echo "Attempt $i/$max_attempts: Checking LocalStack status..."
+            
+            # Check container status
+            container_status=$(docker inspect -f '{{.State.Status}}' localstack)
+            echo "Container status: $container_status"
+            if [ "$container_status" != "running" ]; then
+              echo "Container is not running! Status: $container_status"
+              docker logs localstack
+              exit 1
             fi
-            sleep 2
+            
+            # Check service health
+            echo "Checking service health..."
+            health=$(curl -s http://localhost:4566/_localstack/health || echo "Connection failed")
+            echo "Health response: $health"
+            
+            if echo "$health" | grep -q "\"s3\": \"running\""; then
+              echo "LocalStack S3 service is ready!"
+              
+              # Verify S3 endpoint is responding
+              echo "Verifying S3 endpoint..."
+              aws_response=$(curl -s -f http://localhost:4566/health || echo "S3 endpoint check failed")
+              echo "S3 endpoint response: $aws_response"
+              
+              if [ $? -eq 0 ]; then
+                echo "LocalStack initialization complete!"
+                exit 0
+              fi
+            fi
+            
+            echo "Waiting 5 seconds before next attempt..."
+            sleep 5
           done
-          echo "Localstack failed to start within 120 seconds"
+          
+          echo "LocalStack failed to start within $(($max_attempts * 5)) seconds"
+          echo "Container logs:"
           docker logs localstack
+          echo "Container status:"
+          docker inspect localstack
           exit 1
 
       - name: Run code quality checks
