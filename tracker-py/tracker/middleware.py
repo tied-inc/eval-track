@@ -5,7 +5,6 @@ from fastapi import Request, Response
 from fastapi.responses import JSONResponse
 
 from tracker.logging_config import get_logger, setup_logging
-from tracker.settings import settings
 
 # Ensure logging is configured
 setup_logging()
@@ -51,14 +50,22 @@ async def secret_key_middleware(request: Request, call_next: Callable[[Request],
     Returns:
         Response: The response object returned by the next middleware in the chain.
     """
-    header_key = request.headers.get("x-eval-tracker-secret-key")
+    # Skip authentication for health check endpoint
+    if request.url.path == "/eval-track/health":
+        return await call_next(request)
 
-    if settings.eval_tracker_secret_key and header_key != settings.eval_tracker_secret_key:
+    header_key = request.headers.get("x-eval-tracker-secret-key", "")
+    expected_key = request.app.state.settings.eval_tracker_secret_key.get_secret_value()
+
+    if not header_key:
+        logger.error("Missing secret key")
+        return JSONResponse(status_code=403, content={"detail": "Missing secret key"})
+
+    if header_key != expected_key:
         logger.error("Invalid secret key", extra={"header_key": "REDACTED"})
-        return Response(content="Invalid secret key", status_code=403)
+        return JSONResponse(status_code=403, content={"detail": "Invalid secret key"})
 
     response = await call_next(request)
-
     return response
 
 

@@ -3,9 +3,9 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
 
+from tracker.integrations.fastapi import router
 from tracker.logging_config import get_logger, setup_logging
 from tracker.middleware import api_access_log_middleware, error_handling_middleware, secret_key_middleware
-from tracker.integrations.fastapi import router
 from tracker.settings import settings
 
 # Set up centralized logging configuration
@@ -17,7 +17,8 @@ logger = get_logger(__name__)
 app = FastAPI()
 app.include_router(router)
 
-# Register error handling middleware first
+# Register middlewares in correct order
+app.middleware("http")(secret_key_middleware)
 app.middleware("http")(error_handling_middleware)
 
 
@@ -42,7 +43,6 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> JSONRe
     return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
 
 
-app.middleware("http")(secret_key_middleware)
 app.middleware("http")(api_access_log_middleware)
 if settings.eval_tracker_trusted_hosts:
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.eval_tracker_trusted_hosts)

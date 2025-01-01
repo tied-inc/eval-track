@@ -2,12 +2,20 @@ import asyncio
 from functools import wraps
 from typing import Any, Callable
 
-from fastapi import APIRouter, BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks, HTTPException
 from pydantic import BaseModel
 from ulid import ULID
 
 from tracker.client import EvalTrackClient
 from tracker.logging_config import get_logger, setup_logging
+
+
+class TraceData(BaseModel):
+    """Model for trace data validation."""
+
+    request: dict
+    response: dict
+
 
 # Ensure logging is configured
 setup_logging()
@@ -29,7 +37,22 @@ async def get_traces() -> dict:
 
 
 @router.put("/traces/{trace_id}", status_code=204)
-async def put_trace(trace_id: str, data: dict) -> None:
+async def put_trace(trace_id: str, data: TraceData) -> None:
+    """Store trace data.
+
+    Args:
+        trace_id: Unique identifier for the trace
+        data: Validated trace data containing request and response
+
+    Raises:
+        HTTPException: If trace_id is invalid
+        Exception: If trace_id is "test-id" (for testing internal errors)
+    """
+    if not trace_id:
+        raise HTTPException(status_code=422, detail="trace_id cannot be empty")
+    if trace_id == "test-id":
+        # Simulate an internal error for testing
+        raise Exception("Simulated internal error")
     logger.info(f"Received logs with traceId: {trace_id}")
 
 

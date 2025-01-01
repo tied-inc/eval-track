@@ -16,7 +16,7 @@ API endpoints for trace data.
 ## Installation
 
 ```bash
-uv pip install "git+https://github.com/tied-inc/eval-track/tracker"
+uv pip install "git+https://github.com/tied-inc/eval-track/tracker-py"
 ```
 
 For detailed usage instructions, please refer to each component's documentation.

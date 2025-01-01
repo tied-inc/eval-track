@@ -31,4 +31,9 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", enable_decoding=False)
 
 
-settings = Settings()
+def get_settings() -> Settings:
+    """Get settings instance, reloading from environment."""
+    return Settings(_env_file=None)  # Force reload from environment
+
+
+settings = get_settings()
