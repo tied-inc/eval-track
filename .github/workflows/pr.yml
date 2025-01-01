@@ -87,14 +87,16 @@ jobs:
             if echo "$health" | grep -q "\"s3\": \"running\""; then
               echo "LocalStack S3 service is ready!"
               
-              # Verify S3 endpoint is responding
-              echo "Verifying S3 endpoint..."
-              aws_response=$(curl -s -f http://localhost:4566/health || echo "S3 endpoint check failed")
-              echo "S3 endpoint response: $aws_response"
-              
+              # S3 is available, let's create a test bucket to verify it's working
+              echo "Creating test bucket..."
+              aws --endpoint-url=http://localhost:4566 s3 mb s3://test-bucket
               if [ $? -eq 0 ]; then
-                echo "LocalStack initialization complete!"
+                echo "LocalStack S3 service is fully operational!"
                 exit 0
+              else
+                echo "Failed to create test bucket"
+                aws --endpoint-url=http://localhost:4566 s3 ls
+                exit 1
               fi
             fi
             
