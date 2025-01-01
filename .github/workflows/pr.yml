@@ -61,8 +61,8 @@ jobs:
             -e AWS_ACCESS_KEY_ID=test \
             -e AWS_SECRET_ACCESS_KEY=test \
             -e DEBUG=1 \
-            -e DOCKER_HOST=unix:///var/run/docker.sock \
             -e EAGER_SERVICE_LOADING=1 \
+            -v "/var/run/docker.sock:/var/run/docker.sock" \
             localstack/localstack:latest
           
           echo "Waiting for LocalStack to be ready..."
