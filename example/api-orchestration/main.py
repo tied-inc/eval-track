@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from tracker.router import router
-from tracker.tracer import capture_response
+from tracker.decorator import capture_response
 from tracker.client import EvalTrackClient
 from uvicorn import run
 import httpx

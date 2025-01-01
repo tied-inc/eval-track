@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from tracker.decorator import capture_response
 from tracker.router import router
-from tracker.tracer import capture_response
 from uvicorn import run
 
 

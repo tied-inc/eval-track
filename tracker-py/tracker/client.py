@@ -1,18 +1,15 @@
 import httpx
 from fastapi import HTTPException
 
-from tracker.logging_config import get_logger, setup_logging
+from tracker.logging_config import get_logger
 from tracker.settings import settings
-
-# Ensure logging is configured
-setup_logging()
 
 # Get logger for this module
 logger = get_logger(__name__)
 
 
 class EvalTrackClient:
-    def get_traces(self) -> dict:
+    def get_traces(self) -> list[dict]:
         """Get traces from the eval-track service.
 
         Returns:
