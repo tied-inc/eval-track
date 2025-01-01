@@ -58,6 +58,7 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
+          cache-dependency-path: './tracker-ts/pnpm-lock.yaml'
 
       - name: Install dependencies
         run: task tracker-ts:install
