@@ -18,8 +18,9 @@ Retrieves trace data.
 **Example**:
 ```python
 from tracker.client import EvalTrackClient
+from tracker.prisma_store import PrismaStore
 
-client = EvalTrackClient()
+client = EvalTrackClient(PrismaStore())
 traces = client.get_traces()
 ```
 
@@ -36,8 +37,9 @@ Stores trace data.
 **Example**:
 ```python
 from tracker.client import EvalTrackClient
+from tracker.prisma_store import PrismaStore
 
-client = EvalTrackClient()
+client = EvalTrackClient(PrismaStore())
 client.put_trace("trace-123", {"request": "...", "response": "..."})
 ```
 

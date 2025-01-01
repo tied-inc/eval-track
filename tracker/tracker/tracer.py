@@ -8,6 +8,7 @@ from pydantic import BaseModel
 from ulid import ULID
 
 from tracker.client import EvalTrackClient
+from tracker.prisma_store import PrismaStore
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +30,7 @@ def capture_response(func: Callable) -> Callable:
     """
     bt = BackgroundTasks()
     trace_id = str(ULID())
-    client = EvalTrackClient()
+    client = EvalTrackClient(PrismaStore())
 
     if asyncio.iscoroutinefunction(func):
 
