@@ -1,7 +1,10 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from tracker.logging_config import get_logger
+from tracker.tracker.logging_config import get_logger, setup_logging
+
+# Ensure logging is configured
+setup_logging()
 
 router = APIRouter(prefix="/eval-track")
 logger = get_logger(__name__)

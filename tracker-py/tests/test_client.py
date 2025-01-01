@@ -3,7 +3,7 @@
 import pytest
 from fastapi import HTTPException
 
-from tracker.client import EvalTrackClient
+from tracker.tracker.client import EvalTrackClient
 
 
 @pytest.fixture

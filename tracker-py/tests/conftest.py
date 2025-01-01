@@ -6,8 +6,8 @@ from typing import Generator
 import pytest
 from fastapi.testclient import TestClient
 
-from tracker.main import app
-from tracker.settings import Settings, settings
+from tracker.tracker.main import app
+from tracker.tracker.settings import Settings, settings
 
 
 @pytest.fixture(autouse=True)

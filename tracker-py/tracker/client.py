@@ -1,8 +1,8 @@
 import httpx
 from fastapi import HTTPException
 
-from tracker.logging_config import get_logger
-from tracker.settings import settings
+from tracker.tracker.logging_config import get_logger, setup_logging
+from tracker.tracker.settings import settings
 
 # Get logger for this module
 logger = get_logger(__name__)

@@ -3,7 +3,7 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from tracker.settings import settings
+from tracker.tracker.settings import settings
 
 
 def test_health_check(test_client: TestClient) -> None:

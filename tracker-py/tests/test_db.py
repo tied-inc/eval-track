@@ -2,7 +2,7 @@
 
 import pytest
 
-from tracker.db import AbstractKeyValueStore
+from tracker.tracker.db import AbstractKeyValueStore
 
 
 class TestKeyValueStore(AbstractKeyValueStore):
