@@ -1,0 +1,37 @@
+{
+  "name": "tracker",
+  "version": "1.0.0",
+  "description": "TypeScript implementation of eval-track tracer",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest",
+    "lint": "biome check ./src ./tests",
+    "format": "biome format --write ./src ./tests",
+    "type-check": "tsc --noEmit",
+    "prepare-lint": "biome install && lint-staged",
+    "prepare": "pnpm build"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": ["biome format --write", "biome check", "git add"]
+  },
+  "keywords": ["tracer", "typescript", "eval-track"],
+  "author": "tied-inc",
+  "license": "ISC",
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/node": "^22.10.3",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.3.0",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "dependencies": {
+    "ulid": "^2.3.0",
+    "zod": "^3.24.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
