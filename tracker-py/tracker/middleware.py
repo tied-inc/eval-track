@@ -4,8 +4,8 @@ from typing import Awaitable, Callable
 from fastapi import Request, Response
 from fastapi.responses import JSONResponse
 
-from tracker.tracker.logging_config import get_logger, setup_logging
-from tracker.tracker.settings import settings
+from .logging_config import get_logger, setup_logging
+from .settings import settings
 
 # Ensure logging is configured
 setup_logging()
