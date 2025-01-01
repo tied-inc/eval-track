@@ -30,6 +30,12 @@ async def get_traces() -> list[dict]:
 
 
 class TraceData(BaseModel):
+    """Model for trace data validation.
+    
+    Attributes:
+        request: The request data to be stored
+        response: The response data to be stored
+    """
     request: dict
     response: dict
 

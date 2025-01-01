@@ -3,7 +3,9 @@
 import os
 from typing import Optional
 
-from botocore.exceptions import ClientError
+import boto3
+from botocore.config import Config
+from botocore.exceptions import ClientError, EndpointConnectionError
 
 from tracker.settings import settings
 
