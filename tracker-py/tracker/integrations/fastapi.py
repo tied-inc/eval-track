@@ -1,17 +1,13 @@
-from fastapi import APIRouter
-
-from tracker.logging_config import get_logger, setup_logging
 import asyncio
-import logging
 from functools import wraps
 from typing import Any, Callable
 
-from fastapi import BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks
 from pydantic import BaseModel
 from ulid import ULID
 
 from tracker.client import EvalTrackClient
-
+from tracker.logging_config import get_logger, setup_logging
 
 # Ensure logging is configured
 setup_logging()
