@@ -68,6 +68,109 @@ response, err := wrappedFn(-1)
 - Automatically serializes responses to JSON
 - Thread-safe client implementation
 
+## TypeScript Usage
+
+### Installation
+
+```bash
+pnpm install @tied-inc/eval-track
+```
+
+### Basic Usage
+
+```typescript
+import { captureResponse } from '@tied-inc/eval-track';
+
+// Define your response type
+interface Response {
+  message: string;
+}
+
+// Basic async function
+async function getData(): Promise<Response> {
+  return { message: "Hello from TypeScript!" };
+}
+
+// Wrap the function
+const wrappedFn = captureResponse(getData);
+
+// Use the wrapped function
+const result = await wrappedFn();
+console.log(result.message);
+```
+
+### Error Handling
+
+```typescript
+import { z } from 'zod';
+import { captureResponse } from '@tied-inc/eval-track';
+
+// Define schema for validation
+const ResponseSchema = z.object({
+  data: z.string(),
+  timestamp: z.number(),
+});
+
+type Response = z.infer<typeof ResponseSchema>;
+
+// Function that might throw
+async function riskyOperation(): Promise<Response> {
+  throw new Error('Operation failed');
+}
+
+// Errors are captured in trace data
+const wrapped = captureResponse(riskyOperation);
+try {
+  await wrapped();
+} catch (error) {
+  console.error(error);
+}
+```
+
+### Features
+
+- Generates unique trace IDs using ULID
+- Uses Zod for runtime type validation
+- Supports both synchronous and asynchronous functions
+- Preserves function signatures using TypeScript types
+- Automatically serializes responses to JSON
+
+### Internal Operation
+
+1. When `captureResponse` is called, it creates a closure that wraps the original function
+2. Each function call generates a unique trace ID using ULID
+3. The wrapped function executes the original function inside a try-catch block
+4. Response data or error is captured and sent to the trace server asynchronously
+5. The original return value or error is passed through unchanged
+
+### Limitations
+
+- Return values should be JSON-serializable objects
+- Error objects are stringified for trace storage
+- Trace data storage is asynchronous and may not complete immediately
+- Network errors during trace storage are logged but don't affect the wrapped function
+
+For more detailed information and advanced usage examples, see the [TypeScript tracer README](../tracker-ts/README.md).
+
+## Go Internal Operation
+
+1. When `CaptureResponse` is called, it uses reflection to analyze the function signature
+2. A new function is created that matches the original signature exactly
+3. Each function call generates a unique trace ID using ULID
+4. The wrapped function executes the original function and captures its return values
+5. Response data or error is sent to the trace server asynchronously
+6. Original return values are passed through unchanged
+
+### Go Limitations
+
+- Functions must return (T, error) where T is any type
+- Return values must be JSON-serializable
+- Reflection usage may impact performance on very hot code paths
+- Trace data storage is asynchronous and may not complete immediately
+- Network errors during trace storage are logged but don't affect the wrapped function
+
+For more detailed information and advanced usage examples, see the [Go tracer README](../tracker-go/README.md).
+
 ## Python Usage
 
 ## capture_response Decorator
