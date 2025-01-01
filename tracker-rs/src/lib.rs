@@ -35,7 +35,5 @@ pub(crate) fn set_current_trace(trace: Trace) {
 
 /// Get and clear the current trace for the current thread
 pub(crate) fn take_current_trace() -> Option<Trace> {
-    CURRENT_TRACE.with(|current| {
-        current.borrow_mut().take()
-    })
+    CURRENT_TRACE.with(|current| current.borrow_mut().take())
 }

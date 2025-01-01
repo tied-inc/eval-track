@@ -1,7 +1,7 @@
-use eval_track_rust::{init_tracer, capture_response};
-use wiremock::{MockServer, Mock, ResponseTemplate};
-use wiremock::matchers::{method, path};
+use tracker::{capture_response, init_tracer};
 use tokio;
+use wiremock::matchers::{method, path};
+use wiremock::{Mock, MockServer, ResponseTemplate};
 
 #[tokio::test]
 async fn test_async_capture_response() {

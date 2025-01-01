@@ -1,8 +1,8 @@
-use eval_track_rust::{TracerClient, Trace};
-use wiremock::{MockServer, Mock, ResponseTemplate};
-use wiremock::matchers::{method, path};
+use tracker::{Trace, TracerClient};
 use serde_json::json;
 use tokio;
+use wiremock::matchers::{method, path};
+use wiremock::{Mock, MockServer, ResponseTemplate};
 
 #[tokio::test]
 async fn test_put_trace_success() {

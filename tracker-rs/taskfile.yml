@@ -1,0 +1,29 @@
+version: '3'
+
+tasks:
+  default:
+    desc: Show help
+    cmds:
+      - task --list
+
+  check-all:
+    desc: Run all checks
+    cmds:
+      - task format
+      - task lint
+      - task test
+
+  format:
+    desc: Format code
+    cmds:
+      - cargo fmt -- --check
+
+  lint:
+    desc: Run linters
+    cmds:
+      - cargo clippy -- -D warnings
+
+  test:
+    desc: Run tests
+    cmds:
+      - cargo test
