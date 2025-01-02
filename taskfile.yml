@@ -16,6 +16,9 @@ includes:
   tracker-ts:
     taskfile: ./tracker-ts/taskfile.yml
     dir: ./tracker-ts
+  web:
+    taskfile: ./web/taskfile.yml
+    dir: ./web
 
 tasks:
   default:
@@ -23,13 +26,31 @@ tasks:
     cmds:
       - task --list
 
-  setup-uv:
-    desc: Install uv
+  up:
+    desc: Start the app
     cmds:
-      - curl -LsSf https://astral.sh/uv/install.sh | sh
+      - docker compose up -d
+
+  restart:
+    desc: Restart the app
+    cmds:
+      - docker compose restart
+
+  down:
+    desc: Stop the app
+    cmds:
+      - docker compose down
+
+  watch-log: 
+    desc: watch logs 
+    cmds: 
+      - docker compose logs -f 
 
   check-all:
     desc: Run all checks
     cmds:
       - task tracker-py:check-all
       - task tracker-ts:check-all
+      - task tracker-go:check-all
+      - task tracker-rs:check-all
+      - task web:check-all

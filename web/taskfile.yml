@@ -1,0 +1,70 @@
+version: '3'
+
+tasks:
+  default:
+    desc: Show help
+    cmds:
+      - task --list
+
+  dev:
+    desc: Start development server
+    dir: ../
+    cmds:
+      - docker compose exec web pnpm dev
+
+  check-all:
+    desc: Run all checks
+    cmds:
+      - task check
+      - task format
+      - task lint
+
+  format:
+    desc: Format the code
+    dir: ../
+    cmds:
+      - docker compose exec web pnpm format
+
+  check:
+    desc: Lint the code
+    dir: ../
+    cmds:
+      - docker compose exec web pnpm check
+
+  lint:
+    desc: Lint the code
+    dir: ../
+    cmds:
+      - docker compose exec web pnpm lint
+
+  prisma-generate:
+    desc: generate prisma client
+    dir: ../
+    cmds:
+      - docker compose exec web pnpm prisma generate
+
+  migrate:
+    desc: deploy migration
+    dir: ../
+    cmds:
+      - docker compose exec web pnpm prisma migrate deploy
+
+  make-migration:
+    desc: create a new migration
+    dir: ../
+    cmds:
+      - docker compose exec web pnpm prisma migrate dev --name {{.CLI_ARGS}}
+    vars:
+      NAME: '{{.CLI_ARGS}}'
+
+  reset-db:
+    desc: reset db
+    dir: ../
+    cmds:
+      - docker compose exec web pnpm prisma migrate reset
+
+  better-auth-generate:
+    desc: generate better-auth
+    dir: ../
+    cmds:
+      - docker compose exec web pnpx @better-auth/cli generate
