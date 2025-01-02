@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  tracker:
+  tracker-py:
     build:
       context: .
       dockerfile: Dockerfile
@@ -11,17 +11,21 @@ services:
       - "8080:8080"
     environment:
       - DYNAMODB_ENDPOINT=http://dynamodb:8000
-    depends_on:
-      - dynamodb
 
-  dynamodb:
-    image: public.ecr.aws/aws-dynamodb-local/aws-dynamodb-local:2.5.3
-    user: root
+  web:
+    build: ./app
+    environment:
+      - INNGEST_DEV=1
+      - INNGEST_BASE_URL=http://inngest:8288
     ports:
-      - "8000:8000"
-    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /data"
-    volumes:
-      - dynamodb-data:/data
+      - '3000:3000'
+
+  inngest:
+    image: inngest/inngest:v0.27.0
+    command: 'inngest dev -u http://app:3000/api/inngest'
+    ports:
+      - '8288:8288'
+
 
 volumes:
   dynamodb-data:
