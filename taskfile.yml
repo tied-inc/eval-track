@@ -1,5 +1,22 @@
 version: '3'
 
+includes:
+  example:
+    taskfile: ./example/taskfile.yml
+    dir: ./example
+  tracker-go:
+    taskfile: ./tracker-go/taskfile.yml
+    dir: ./tracker-go
+  tracker-py:
+    taskfile: ./tracker-py/taskfile.yml
+    dir: ./tracker-py
+  tracker-rs:
+    taskfile: ./tracker-rs/taskfile.yml
+    dir: ./tracker-rs
+  tracker-ts:
+    taskfile: ./tracker-ts/taskfile.yml
+    dir: ./tracker-ts
+
 tasks:
   default:
     desc: Show help
@@ -11,32 +28,8 @@ tasks:
     cmds:
       - curl -LsSf https://astral.sh/uv/install.sh | sh
 
-  install-tracker-py:
-    desc: Install dependencies
-    dir: tracker-py
-    cmds:
-      - uv sync --frozen
-
-  start-tracker-py-app:
-    desc: Start the tracker app
-    dir: tracker-py
-    cmds:
-      - uv run uvicorn tracker.main:app --host 0.0.0.0 --port 8080
-
-  check-all-tracker-py:
+  check-all:
     desc: Run all checks
-    dir: tracker-py
     cmds:
-      - uv run ruff format .
-      - uv run ruff check --fix .
-      - uv run mypy .
-      # - PYTHON_PATH=. uv run pytest tests/
-
-  check-all-example:
-    desc: Run all checks
-    dir: example
-    cmds:
-      - uv run ruff format .
-      - uv run ruff check --fix .
-      # - uv run mypy .
-      # - uv run pytest tests/ .
+      - task tracker-py:check-all
+      - task tracker-ts:check-all

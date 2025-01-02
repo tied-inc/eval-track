@@ -1,11 +1,11 @@
 #[cfg(feature = "integration-tests")]
 mod tests {
-    use eval_track_rust::{init_tracer, capture_response, TracerClient};
     use serde_json::json;
     use std::time::Duration;
     use tokio;
-    use wiremock::{MockServer, Mock, ResponseTemplate};
-    use wiremock::matchers::{method, path, body_json_schema};
+    use tracker::{capture_response, init_tracer, TracerClient};
+    use wiremock::matchers::{body_json_schema, method, path};
+    use wiremock::{Mock, MockServer, ResponseTemplate};
 
     #[tokio::test]
     async fn test_full_trace_lifecycle() {

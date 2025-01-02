@@ -3,79 +3,80 @@ name: PR Checks
 on:
   pull_request:
     branches: [ main ]
-    paths:
-      - 'tracker-py/**'
-      - 'tracker-ts/**'
-      - 'tracker-go/**'
-      - 'tracker-rs/**'
-      - '.github/workflows/**'
 
 jobs:
   python-checks:
-    if: contains(github.event.pull_request.changed_files, 'tracker-py/')
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tracker-py
     steps:
       - uses: actions/checkout@v4
+      - name: Install task
+        run: |
+          sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
       - uses: actions/setup-python@v4
         with:
           python-version: '3.12'
       - name: Install dependencies
         run: |
-          pip install uv
-          uv pip install ruff mypy
-          cd tracker-py && uv pip install -e ".[dev]"
+          task setup-uv
+          task install
       - name: Run ruff format check
-        run: cd tracker-py && ruff format --check .
-      - name: Run ruff check
-        run: cd tracker-py && ruff check .
-      - name: Run mypy
-        run: cd tracker-py && mypy .
+        run: task check-all
 
   typescript-checks:
-    if: contains(github.event.pull_request.changed_files, 'tracker-ts/')
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tracker-ts
     steps:
       - uses: actions/checkout@v4
+      - name: Install task
+        run: |
+          sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
       - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
       - uses: pnpm/action-setup@v2
         with:
           version: 8
       - name: Install dependencies
-        run: cd tracker-ts && pnpm install
-      - name: Run biome checks
-        run: cd tracker-ts && pnpm lint
-      - name: Run tests
-        run: cd tracker-ts && pnpm test
+        run: task install
+      - name: Run all checks
+        run: task check-all
 
   go-checks:
-    if: contains(github.event.pull_request.changed_files, 'tracker-go/')
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tracker-go
     steps:
       - uses: actions/checkout@v4
+      - name: Install task
+        run: |
+          sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
       - uses: actions/setup-go@v4
         with:
-          go-version: '1.20'
-      - name: Run go fmt
-        run: cd tracker-go && test -z $(go fmt ./...)
-      - name: Run go vet
-        run: cd tracker-go && go vet ./...
-      - name: Run tests
-        run: cd tracker-go && go test ./...
+          go-version: '1.22'
+      - name: Run check-all
+        run: |
+          task check-all
 
   rust-checks:
-    if: contains(github.event.pull_request.changed_files, 'tracker-rs/')
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tracker-rs
     steps:
       - uses: actions/checkout@v4
+      - name: Install task
+        run: |
+          sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           components: rustfmt, clippy
-      - name: Run cargo fmt
-        run: cd tracker-rs && cargo fmt -- --check
-      - name: Run cargo clippy
-        run: cd tracker-rs && cargo clippy -- -D warnings
-      - name: Run tests
-        run: cd tracker-rs && cargo test
+      - name: checkall
+        run: |
+          task check-all

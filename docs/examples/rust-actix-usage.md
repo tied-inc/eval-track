@@ -17,7 +17,7 @@ tokio = { version = "1", features = ["full"] }
 
 ```rust
 use actix_web::{web, App, HttpResponse, HttpServer};
-use eval_track_rust::{capture_response, init_tracer};
+use tracker::{capture_response, init_tracer};
 use serde::{Deserialize, Serialize};
 
 // Define response types
@@ -74,7 +74,7 @@ async fn service2() -> HttpResponse {
 #[capture_response]
 async fn orchestrate() -> Result<HttpResponse, actix_web::Error> {
     let client = awc::Client::default();
-    
+
     // Make parallel requests to services
     let (service1_resp, service2_resp) = tokio::join!(
         client.get("http://localhost:8080/service1").send(),
@@ -98,7 +98,7 @@ async fn orchestrate() -> Result<HttpResponse, actix_web::Error> {
 ## Advanced Error Handling
 
 ```rust
-use eval_track_rust::{TracerError, capture_response};
+use tracker::{TracerError, capture_response};
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -192,7 +192,7 @@ where
         };
 
         req.extensions_mut().insert(context.clone());
-        
+
         let fut = self.service.call(req);
         Box::pin(async move {
             let res = fut.await?;

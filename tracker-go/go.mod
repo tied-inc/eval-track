@@ -1,6 +1,6 @@
 module github.com/tied-inc/eval-track/tracker-go
 
-go 1.18
+go 1.22
 
 require (
 	github.com/oklog/ulid v1.3.1

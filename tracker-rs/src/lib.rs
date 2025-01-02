@@ -13,7 +13,7 @@ pub use types::Trace;
 
 static TRACER_CLIENT: OnceCell<Arc<TracerClient>> = OnceCell::new();
 thread_local! {
-    static CURRENT_TRACE: RefCell<Option<Trace>> = RefCell::new(None);
+    static CURRENT_TRACE: RefCell<Option<Trace>> = const { RefCell::new(None) };
 }
 
 /// Initialize the global tracer client
@@ -35,7 +35,5 @@ pub(crate) fn set_current_trace(trace: Trace) {
 
 /// Get and clear the current trace for the current thread
 pub(crate) fn take_current_trace() -> Option<Trace> {
-    CURRENT_TRACE.with(|current| {
-        current.borrow_mut().take()
-    })
+    CURRENT_TRACE.with(|current| current.borrow_mut().take())
 }

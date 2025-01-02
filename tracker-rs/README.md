@@ -18,7 +18,7 @@ Add the following to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-eval_track_rust = { git = "https://github.com/tied-inc/eval-track", package = "eval_track_rust" }
+tracker = { git = "https://github.com/tied-inc/eval-track", package = "tracker" }
 ```
 
 ## Usage
@@ -26,7 +26,7 @@ eval_track_rust = { git = "https://github.com/tied-inc/eval-track", package = "e
 ### Basic Usage
 
 ```rust
-use eval_track_rust::{init_tracer, capture_response};
+use tracker::{init_tracer, capture_response};
 
 // Initialize the tracer with your API endpoint
 init_tracer("https://api.example.com");
@@ -45,7 +45,7 @@ assert_eq!(result, 42);
 ### Async Functions
 
 ```rust
-use eval_track_rust::{init_tracer, capture_response};
+use tracker::{init_tracer, capture_response};
 
 #[capture_response]
 async fn async_function(input: String) -> Result<String, String> {
@@ -55,7 +55,7 @@ async fn async_function(input: String) -> Result<String, String> {
 #[tokio::main]
 async fn main() -> Result<(), String> {
     init_tracer("https://api.example.com");
-    
+
     let result = async_function("hello".to_string()).await?;
     assert_eq!(result, "HELLO");
     Ok(())
@@ -81,14 +81,14 @@ assert!(result.is_err());
 If you need more control, you can use the `TracerClient` directly:
 
 ```rust
-use eval_track_rust::{TracerClient, Trace};
+use tracker::{TracerClient, Trace};
 use serde_json::json;
 use chrono::Utc;
 use ulid::Ulid;
 
 async fn manual_trace() -> Result<(), Box<dyn std::error::Error>> {
     let client = TracerClient::new("https://api.example.com");
-    
+
     let trace = Trace {
         id: Ulid::new().to_string(),
         request: json!({ "method": "GET", "path": "/api/data" }),
@@ -96,7 +96,7 @@ async fn manual_trace() -> Result<(), Box<dyn std::error::Error>> {
         created_at: Utc::now(),
         updated_at: Utc::now(),
     };
-    
+
     client.put_trace(&trace).await?;
     Ok(())
 }
