@@ -28,6 +28,9 @@ The following examples demonstrate different ways to integrate and use eval-trac
 ### [Advanced FastAPI Usage](examples/advanced-fastapi-usage.md)
 Demonstrates advanced patterns including async processing, error handling, and Pydantic model integration.
 
+### [Rust Actix Usage](examples/rust-actix-usage.md)
+Demonstrates capturing function responses in an Actix Web application using procedural macros.
+
 ### [API Orchestration](examples/api-orchestration.md)
 Illustrates microservice orchestration with parallel request processing and comprehensive trace aggregation.
 
