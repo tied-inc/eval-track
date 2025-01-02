@@ -1,31 +1,92 @@
-version: '3.8'
-
 services:
   tracker-py:
     build:
-      context: .
+      context: ./tracker-py
       dockerfile: Dockerfile
-    volumes:
-      - .:/app
     ports:
       - "8080:8080"
-    environment:
-      - DYNAMODB_ENDPOINT=http://dynamodb:8000
 
   web:
-    build: ./app
-    environment:
-      - INNGEST_DEV=1
-      - INNGEST_BASE_URL=http://inngest:8288
+    build:
+      context: ./web
+      dockerfile: Dockerfile
     ports:
-      - '3000:3000'
+      - "3000:3000"
+    volumes:
+      - ./web:/app
+    command: "pnpm dev"
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/eval_track_development?schema=public"
+      BETTER_AUTH_SECRET: "local-sample"
+      BETTER_AUTH_URL: "http://web:3000"
+      INNGEST_DEV: "0"
+      INNGEST_BASE_URL: "http://inngest:8288"
+      INNGEST_EVENT_KEY: "local-sample"
+      INNGEST_SIGNING_KEY: "local-sample"
+
+  minio:
+    image: minio/minio
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio
+    volumes:
+      - minio-data:/data
+    ports:
+      - "4569:4569" # MinIO API Port
+      - "9001:9001" # MinIO Console Port
+    command: server /data --address ":4569" --console-address ":9001"
+
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - ./web/db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: [ 'CMD-SHELL', 'pg_isready' ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
   inngest:
-    image: inngest/inngest:v0.27.0
-    command: 'inngest dev -u http://app:3000/api/inngest'
+    image: inngest/inngest:latest
+    command: 'inngest start -u http://web:3000/api/inngest'
     ports:
       - '8288:8288'
+    environment:
+      - INNGEST_PORT=8288
+      - INNGEST_DEV=0
+      - INNGEST_REDIS_URI=redis://redis:6379
+      - INNGEST_SDK_URL=http://web:3000/api/inngest
+      - INNGEST_SIGNING_KEY=local-sample
+      - INNGEST_EVENT_KEY=local-sample
+    depends_on:
+      - redis
 
+  redis:
+    image: redis:latest
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+
+  redisinsight:
+    image: redis/redisinsight:latest
+    ports:
+      - 5540:5540
+    volumes:
+      - redisinsight:/data
+    depends_on:
+      - redis
 
 volumes:
-  dynamodb-data:
+  postgres:
+  redis_data:
+  redisinsight:
+  minio-data:
