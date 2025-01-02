@@ -25,9 +25,6 @@ For detailed usage instructions, please refer to each component's documentation.
 
 The following examples demonstrate different ways to integrate and use eval-track in your applications:
 
-### [FastAPI Injection](examples/fastapi-injection.md)
-Shows how to inject the eval-track router directly into a FastAPI application for basic trace collection.
-
 ### [Advanced FastAPI Usage](examples/advanced-fastapi-usage.md)
 Demonstrates advanced patterns including async processing, error handling, and Pydantic model integration.
 

@@ -6,7 +6,6 @@ nav:
     - Tracer: tracer.md
     - Router: router.md
   - Examples:
-    - "FastAPI Injection": examples/fastapi-injection.md
     - "Advanced FastAPI Usage": examples/advanced-fastapi-usage.md
     - "API Orchestration": examples/api-orchestration.md
     - "Go http usage": examples/go-http-usage.md
