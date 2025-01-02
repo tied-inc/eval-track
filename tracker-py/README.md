@@ -4,10 +4,28 @@ This library is LLM-ML observability tool for Python.
 
 ## Usage
 
-### Package installation
+### Installation
 
+#### Prerequisites
+- Python 3.8 or higher
+- [uv](https://github.com/astral-sh/uv) package manager
+- [Task](https://taskfile.dev/) (optional, for development tasks)
+
+#### Install using uv
 ```bash
 uv pip install "git+https://github.com/tied-inc/eval-track/tracker"
+```
+
+#### Install using Task (recommended for development)
+```bash
+# Install Task if not already installed
+npm install -g @go-task/cli
+
+# Install uv if not already installed
+task setup-uv
+
+# Install dependencies
+task install-tracker
 ```
 
 **usage example**

@@ -14,11 +14,25 @@ A Rust implementation of the eval-track tracer with support for both synchronous
 
 ## Installation
 
+### Prerequisites
+- Rust with Cargo installed
+- [Task](https://taskfile.dev/) (optional, for development tasks)
+
+### Install using Cargo
 Add the following to your `Cargo.toml`:
 
 ```toml
 [dependencies]
 eval_track_rust = { git = "https://github.com/tied-inc/eval-track", package = "eval_track_rust" }
+```
+
+### Install using Task (recommended for development)
+```bash
+# Install Task if not already installed
+npm install -g @go-task/cli
+
+# Install dependencies
+task install-tracker
 ```
 
 ## Usage

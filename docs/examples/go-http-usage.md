@@ -4,9 +4,24 @@ This example demonstrates how to use the Go tracer with a standard HTTP server a
 
 ## Installation
 
+### Prerequisites
+- Go version 1.20 or higher
+- Working Go environment (GOPATH configured)
+- [Task](https://taskfile.dev/) (optional, for development tasks)
+
+### Install using go get
 ```bash
 go get -u github.com/tied-inc/eval-track/tracker-go
 go get -u github.com/gorilla/mux
+```
+
+### Install using Task (recommended for development)
+```bash
+# Install Task if not already installed
+npm install -g @go-task/cli
+
+# Install dependencies
+task install-tracker
 ```
 
 ## Basic HTTP Server Integration

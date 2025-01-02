@@ -6,21 +6,39 @@ This example demonstrates advanced usage patterns of eval-track with FastAPI, in
 
 The Advanced FastAPI Usage example showcases more sophisticated integration patterns with eval-track, demonstrating how to handle complex scenarios in production environments.
 
-## Setup
+## Installation
 
+### Prerequisites
+- Python 3.8 or higher
+- [uv](https://github.com/astral-sh/uv) package manager
+- [Task](https://taskfile.dev/) (optional, for development tasks)
+
+### Install using uv
 ```bash
 # Clone the repository
 git clone https://github.com/tied-inc/eval-track
 
 # Navigate to the example directory
-cd example
+cd example/advanced-fastapi-usage
 
 # Install dependencies
 uv sync --frozen
+```
 
-cd advanced-fastapi-usage
+### Install using Task (recommended for development)
+```bash
+# Install Task if not already installed
+npm install -g @go-task/cli
 
-# Run the application
+# Install uv if not already installed
+task setup-uv
+
+# Install dependencies
+task install-tracker
+```
+
+### Running the Application
+```bash
 uv main:app
 ```
 

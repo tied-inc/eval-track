@@ -4,13 +4,27 @@ This example demonstrates how to use the eval-track Rust tracer with an Actix We
 
 ## Installation
 
-```bash
-# In your Cargo.toml
+### Prerequisites
+- Rust with Cargo installed
+- [Task](https://taskfile.dev/) (optional, for development tasks)
+
+### Install using Cargo
+Add the following to your `Cargo.toml`:
+```toml
 [dependencies]
 eval-track-rust = { git = "https://github.com/tied-inc/eval-track" }
 actix-web = "4"
 serde = { version = "1", features = ["derive"] }
 tokio = { version = "1", features = ["full"] }
+```
+
+### Install using Task (recommended for development)
+```bash
+# Install Task if not already installed
+npm install -g @go-task/cli
+
+# Install dependencies
+task install-tracker
 ```
 
 ## Basic Actix Web Integration

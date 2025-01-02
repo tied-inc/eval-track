@@ -4,6 +4,12 @@ A TypeScript implementation of the eval-track tracer for capturing function resp
 
 ## Installation
 
+### Prerequisites
+- Node.js version 18 or higher
+- pnpm (recommended), npm, or yarn
+- [Task](https://taskfile.dev/) (optional, for development tasks)
+
+### Install using package manager
 ```bash
 # Using pnpm (recommended)
 pnpm install @tied-inc/eval-track
@@ -15,11 +21,16 @@ npm install @tied-inc/eval-track
 yarn add @tied-inc/eval-track
 ```
 
-## Environment Setup
+### Install using Task (recommended for development)
+```bash
+# Install Task if not already installed
+npm install -g @go-task/cli
 
-### Requirements
-- Node.js version 18 or higher
-- pnpm (recommended) or npm/yarn
+# Install dependencies
+task install-tracker
+```
+
+## Environment Setup
 
 ### Configuration
 

@@ -10,8 +10,23 @@ The tracer module provides functionality for capturing responses from functions 
 
 ### Installation
 
+#### Prerequisites
+- Go version 1.20 or higher
+- Working Go environment (GOPATH configured)
+- [Task](https://taskfile.dev/) (optional, for development tasks)
+
+#### Install using go get
 ```bash
 go get github.com/tied-inc/eval-track/tracker-go
+```
+
+#### Install using Task (recommended for development)
+```bash
+# Install Task if not already installed
+npm install -g @go-task/cli
+
+# Install dependencies
+task install-tracker
 ```
 
 ### Basic Usage
@@ -72,8 +87,30 @@ response, err := wrappedFn(-1)
 
 ### Installation
 
+#### Prerequisites
+- Node.js version 18 or higher
+- pnpm (recommended), npm, or yarn
+- [Task](https://taskfile.dev/) (optional, for development tasks)
+
+#### Install using package manager
 ```bash
+# Using pnpm (recommended)
 pnpm install @tied-inc/eval-track
+
+# Or using npm
+npm install @tied-inc/eval-track
+
+# Or using yarn
+yarn add @tied-inc/eval-track
+```
+
+#### Install using Task (recommended for development)
+```bash
+# Install Task if not already installed
+npm install -g @go-task/cli
+
+# Install dependencies
+task install-tracker
 ```
 
 ### Basic Usage
@@ -175,8 +212,22 @@ For more detailed information and advanced usage examples, see the [Go tracer RE
 
 ### Installation
 
+#### Prerequisites
+- Rust with Cargo installed
+- [Task](https://taskfile.dev/) (optional, for development tasks)
+
+#### Install using Cargo
 ```bash
 cargo add eval-track-rust --git https://github.com/tied-inc/eval-track
+```
+
+#### Install using Task (recommended for development)
+```bash
+# Install Task if not already installed
+npm install -g @go-task/cli
+
+# Install dependencies
+task install-tracker
 ```
 
 ### Basic Usage
@@ -255,7 +306,31 @@ For more detailed information and advanced usage examples, see the [Rust tracer 
 
 ## Python Usage
 
-## capture_response Decorator
+### Installation
+
+#### Prerequisites
+- Python 3.8 or higher
+- [uv](https://github.com/astral-sh/uv) package manager
+- [Task](https://taskfile.dev/) (optional, for development tasks)
+
+#### Install using uv
+```bash
+uv pip install "git+https://github.com/tied-inc/eval-track/tracker"
+```
+
+#### Install using Task (recommended for development)
+```bash
+# Install Task if not already installed
+npm install -g @go-task/cli
+
+# Install uv if not already installed
+task setup-uv
+
+# Install dependencies
+task install-tracker
+```
+
+### capture_response Decorator
 
 A decorator that automatically records function return values as trace data. Supports both synchronous and asynchronous functions.
 
