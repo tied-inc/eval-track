@@ -28,10 +28,12 @@ task setup-uv
 task install-tracker
 ```
 
-**usage example**
+**Usage Examples**
 
-- [fastapi-app-injection](../example/fastapi-app-injection/)
-    - show and describe how you use this library inside your FastAPI app
+- [Advanced FastAPI Usage](../docs/examples/advanced-fastapi-usage.md)
+    - Demonstrates advanced patterns including async processing, error handling, and Pydantic model integration
+- [API Orchestration](../docs/examples/api-orchestration.md)
+    - Shows how to use this library for tracing and monitoring distributed API calls
 
 ### Docker
 
