@@ -4,8 +4,30 @@ This example demonstrates how to use the TypeScript tracer with Express.js, show
 
 ## Installation
 
+### Prerequisites
+- Node.js version 18 or higher
+- pnpm (recommended), npm, or yarn
+- [Task](https://taskfile.dev/) (optional, for development tasks)
+
+### Install using package manager
 ```bash
+# Using pnpm (recommended)
 pnpm add express @tied-inc/eval-track @types/express
+
+# Or using npm
+npm install express @tied-inc/eval-track @types/express
+
+# Or using yarn
+yarn add express @tied-inc/eval-track @types/express
+```
+
+### Install using Task (recommended for development)
+```bash
+# Install Task if not already installed
+npm install -g @go-task/cli
+
+# Install dependencies
+task install-tracker
 ```
 
 ## Basic Express.js Integration

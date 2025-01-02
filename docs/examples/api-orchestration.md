@@ -6,21 +6,39 @@ This example demonstrates how to use eval-track for tracing and monitoring distr
 
 The API Orchestration example shows how to implement trace collection and monitoring in a microservices architecture, with parallel request processing and comprehensive trace aggregation.
 
-## Setup
+## Installation
 
+### Prerequisites
+- Python 3.8 or higher
+- [uv](https://github.com/astral-sh/uv) package manager
+- [Task](https://taskfile.dev/) (optional, for development tasks)
+
+### Install using uv
 ```bash
 # Clone the repository
 git clone https://github.com/tied-inc/eval-track
 
 # Navigate to the example directory
-cd example
+cd example/api-orchestration
 
 # Install dependencies
 uv sync --frozen
+```
 
-cd api-orchestration
+### Install using Task (recommended for development)
+```bash
+# Install Task if not already installed
+npm install -g @go-task/cli
 
-# Run the application
+# Install uv if not already installed
+task setup-uv
+
+# Install dependencies
+task install-tracker
+```
+
+### Running the Application
+```bash
 uv main:app
 ```
 

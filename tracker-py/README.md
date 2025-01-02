@@ -4,16 +4,36 @@ This library is LLM-ML observability tool for Python.
 
 ## Usage
 
-### Package installation
+### Installation
 
+#### Prerequisites
+- Python 3.8 or higher
+- [uv](https://github.com/astral-sh/uv) package manager
+- [Task](https://taskfile.dev/) (optional, for development tasks)
+
+#### Install using uv
 ```bash
 uv pip install "git+https://github.com/tied-inc/eval-track/tracker"
 ```
 
-**usage example**
+#### Install using Task (recommended for development)
+```bash
+# Install Task if not already installed
+npm install -g @go-task/cli
 
-- [fastapi-app-injection](../example/fastapi-app-injection/)
-    - show and describe how you use this library inside your FastAPI app
+# Install uv if not already installed
+task setup-uv
+
+# Install dependencies
+task install-tracker
+```
+
+**Usage Examples**
+
+- [Advanced FastAPI Usage](../docs/examples/advanced-fastapi-usage.md)
+    - Demonstrates advanced patterns including async processing, error handling, and Pydantic model integration
+- [API Orchestration](../docs/examples/api-orchestration.md)
+    - Shows how to use this library for tracing and monitoring distributed API calls
 
 ### Docker
 

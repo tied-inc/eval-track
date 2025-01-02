@@ -4,15 +4,26 @@ A Go implementation of the eval-track tracer for capturing function responses in
 
 ## Installation
 
+### Prerequisites
+- Go version 1.20 or higher
+- Working Go environment (GOPATH configured)
+- [Task](https://taskfile.dev/) (optional, for development tasks)
+
+### Install using go get
 ```bash
 go get github.com/tied-inc/eval-track/tracker-go
 ```
 
-## Environment Setup
+### Install using Task (recommended for development)
+```bash
+# Install Task if not already installed
+npm install -g @go-task/cli
 
-### Requirements
-- Go version 1.20 or higher
-- Working Go environment (GOPATH configured)
+# Install dependencies
+task install-tracker
+```
+
+## Environment Setup
 
 ### Configuration
 
