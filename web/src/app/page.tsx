@@ -1,9 +1,5 @@
-"use client";
+import DashboardBarChart from "@/components/dashboard-bar-chart";
 
-import type { NextPage } from "next";
-import dynamic from "next/dynamic";
-const AdminApp = dynamic(() => import("@/components/AdminApp"), { ssr: false });
-
-const Home: NextPage = () => <AdminApp />;
-
-export default Home;
+export default async function Page() {
+	return <DashboardBarChart />;
+}
