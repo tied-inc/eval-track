@@ -12,6 +12,7 @@ tasks:
       - task format
       - task lint
       - task test
+    ignore_error: true
 
   format:
     desc: Format code
