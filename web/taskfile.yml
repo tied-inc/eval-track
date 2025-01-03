@@ -23,19 +23,19 @@ tasks:
     desc: Format the code
     dir: ../
     cmds:
-      - docker compose exec web pnpm format
+      - pnpm format
 
   check:
     desc: Lint the code
     dir: ../
     cmds:
-      - docker compose exec web pnpm check
+      - pnpm check
 
   lint:
     desc: Lint the code
     dir: ../
     cmds:
-      - docker compose exec web pnpm lint
+      - pnpm lint
 
   prisma-generate:
     desc: generate prisma client

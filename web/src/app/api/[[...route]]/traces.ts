@@ -1,16 +1,16 @@
 import { zValidator } from "@hono/zod-validator";
-import { Hono } from "hono";
 import { z } from "zod";
 
-import { inngestFunctions } from "@/app/api/inngest/functions";
-import { inngest } from "@/utils/inngest/client";
+import { sendAddTraceEvent } from "@/worker/add-trace";
 import { PrismaClient } from "@prisma/client";
+import { getHonoApp } from "@/utils/hono";
+import { getStorageClient } from "@/utils/storage-client";
 
-const app = new Hono();
+const app = getHonoApp();
 
 app.get("/", async (c) => {
 	const prisma = new PrismaClient();
-	const ret = await prisma.trace.findMany();
+	const ret = await prisma.applicationTrace.findMany();
 
 	return c.json({
 		status: 200,
@@ -23,19 +23,15 @@ const postTraceSchema = z.object({
 });
 app.post(
 	"/",
-	zValidator("json", postTraceSchema, async (result, c) => {
-		console.log(result);
-		console.log(await c.req.json());
-		if (!result.success) {
-			return c.text("Invalid!", 400);
-		}
-	}),
+	zValidator("json", postTraceSchema),
 	async (c) => {
-		await inngest.send({
-			name: inngestFunctions.addTrace.event,
-			data: {
-				data: c.req.valid("json").data,
-			},
+		const storage = getStorageClient();
+
+		// todo: store data to storage before sending event
+		await sendAddTraceEvent({
+			trackingId: c.get("trackingId"),
+			traceId: c.get("requestId"),
+			data: c.req.valid("json").data,
 		});
 
 		return c.json({ status: 204 });

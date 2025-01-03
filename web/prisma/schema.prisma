@@ -7,7 +7,6 @@
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["postgresqlExtensions"]
-  binaryTargets   = ["native", "linux-musl-openssl-3.0.x", "linux-musl-arm64-openssl-3.0.x"]
 }
 
 datasource db {
@@ -26,13 +25,29 @@ model Application {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
 
-  // userId String @map("user_id")
-  // user   User   @relation(fields: [userId], references: [id])
+  // user can make decision where to store the artifact
+  artifactStoreId String        @map("artifact_store_id") @db.Uuid
+  ArtifactStore   ArtifactStore @relation(fields: [artifactStoreId], references: [id])
 
-  ApplicationTrace       ApplicationTrace[]
+  ApplicationTracking    ApplicationTracking[]
   ApplicationTrackingKey ApplicationTrackingKey[]
 
   @@map("applications")
+}
+
+model ApplicationTracking {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  applicationId String      @map("application_id") @db.Uuid
+  Application   Application @relation(fields: [applicationId], references: [id])
+
+  ApplicationTrace    ApplicationTrace[]
+  ApplicationFeedback ApplicationFeedback[]
+
+  @@map("application_trackings")
 }
 
 model ApplicationTrackingKey {
@@ -42,36 +57,57 @@ model ApplicationTrackingKey {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  // userId String @map("user_id")
-  // user   User   @relation(fields: [userId], references: [id])
-
   applicationId String      @map("application_id") @db.Uuid
-  application   Application @relation(fields: [applicationId], references: [id])
+  Application   Application @relation(fields: [applicationId], references: [id])
 
   @@map("application_tracking_keys")
 }
 
-model Trace {
+model ApplicationTrace {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
-  createdAt        DateTime           @default(now()) @map("created_at")
-  updatedAt        DateTime           @default(now()) @updatedAt @map("updated_at")
-  ApplicationTrace ApplicationTrace[]
-  Artifact         Artifact[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  @@map("traces")
+  applicationTrackingId String              @map("application_tracking_id") @db.Uuid
+  ApplicationTracking   ApplicationTracking @relation(fields: [applicationTrackingId], references: [id])
+  artifactId            String              @map("artifact_id") @db.Uuid
+  Artifact              Artifact            @relation(fields: [artifactId], references: [id])
+
+  @@map("application_traces")
+}
+
+model ApplicationFeedback {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  applicationTrackingId String              @map("application_tracking_id") @db.Uuid
+  ApplicationTracking   ApplicationTracking @relation(fields: [applicationTrackingId], references: [id])
+  artifact_id           String              @map("artifact_id") @db.Uuid
+  Artifact              Artifact            @relation(fields: [artifact_id], references: [id])
+
+  @@map("application_feedbacks")
+}
+
+enum ArtifactStoreType {
+  S3
+  GCS
+  AzureBlob
 }
 
 model ArtifactStore {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
   name      String
-  endpoint  String
-  isActive  Boolean  @default(true) @map("is_active")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  type      ArtifactStoreType
+  isActive  Boolean           @default(true) @map("is_active")
+  createdAt DateTime          @default(now()) @map("created_at")
+  updatedAt DateTime          @default(now()) @updatedAt @map("updated_at")
 
-  Artifact Artifact[]
+  Artifact    Artifact[]
+  Application Application[]
 
   @@map("artifact_stores")
 }
@@ -79,32 +115,17 @@ model ArtifactStore {
 model Artifact {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
-  uri String
-
-  artifactStoreId String        @map("artifact_store_id") @db.Uuid
-  ArtifactStore   ArtifactStore @relation(fields: [artifactStoreId], references: [id])
-  traceId         String        @db.Uuid
-  Trace           Trace         @relation(fields: [traceId], references: [id])
-
+  key       String
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
+  artifactStoreId String        @map("artifact_store_id") @db.Uuid
+  ArtifactStore   ArtifactStore @relation(fields: [artifactStoreId], references: [id])
+
+  ApplicationTrace    ApplicationTrace[]
+  ApplicationFeedback ApplicationFeedback[]
+
   @@map("artifacts")
-}
-
-model ApplicationTrace {
-  applicationId String   @map("application_id") @db.Uuid
-  traceId       String   @map("trace_id") @db.Uuid
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at")
-
-  Application Application @relation(fields: [applicationId], references: [id])
-  Trace       Trace       @relation(fields: [traceId], references: [id])
-
-  @@unique([applicationId, traceId], name: "application_traces_application_id_trace_id_unique")
-  @@index([applicationId], name: "application_traces_application_id_index")
-  @@index([traceId], name: "application_traces_trace_id_index")
-  @@map("application_traces")
 }
 
 model User {
@@ -117,9 +138,6 @@ model User {
   updatedAt     DateTime
   sessions      Session[]
   accounts      Account[]
-
-  // Application            Application[]
-  // ApplicationTrackingKey ApplicationTrackingKey[]
 
   @@unique([email])
   @@map("user")
@@ -134,7 +152,7 @@ model Session {
   ipAddress String?
   userAgent String?
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([token])
   @@map("session")
@@ -145,7 +163,7 @@ model Account {
   accountId             String
   providerId            String
   userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?
   refreshToken          String?
   idToken               String?
