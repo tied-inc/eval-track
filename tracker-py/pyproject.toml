@@ -5,15 +5,22 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-  "fastapi>=0.115.6",
-  "httpx>=0.28.1",
-  "pydantic-settings>=2.7.0",
-  "python-ulid[pydantic]>=3.0.0",
-  "uvicorn>=0.34.0",
+    "fastapi>=0.115.6",
+    "httpx>=0.28.1",
+    "pydantic-settings>=2.7.0",
+    "python-ulid[pydantic]>=3.0.0",
+    "uvicorn>=0.34.0",
+    "boto3>=1.34.0",
+    "botocore>=1.34.0",
 ]
 
 [tool.uv]
-dev-dependencies = ["mypy>=1.14.0", "ruff>=0.8.4", "pytest>=7.5.0"]
+dev-dependencies = [
+    "mypy>=1.14.0",
+    "ruff>=0.8.4",
+    "pytest>=7.5.0",
+    "coverage>=7.4.0",
+]
 
 [tool.mypy]
 python_version = "3.11"
@@ -24,13 +31,47 @@ no_implicit_optional = true
 check_untyped_defs = true
 warn_redundant_casts = true
 ignore_missing_imports = true
+exclude = []
 plugins = ['pydantic.mypy']
-exclude = [".venv", ".mypy_cache", ".pytest_cache"]
+namespace_packages = true
+explicit_package_bases = true
+mypy_path = "."
 
 
 [tool.ruff]
 line-length = 119
-select = ["C9", "E", "F", "W", "I"]
+select = [
+  "C9",
+  "E",
+  "F",
+  "W",
+  "I",
+]
 
 [tool.ruff.isort]
 combine-as-imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "--strict-markers"
+markers = [
+    "asyncio: mark test as async/await test",
+]
+asyncio_mode = "auto"
+
+[tool.coverage.run]
+source = ["tracker"]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+    "pass",
+    "raise ImportError",
+]
+show_missing = true
+fail_under = 80

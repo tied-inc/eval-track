@@ -1,0 +1,220 @@
+name: PR Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./tracker-py
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install task
+        run: |
+          sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
+
+      - name: Setup uv
+        run: |
+          task setup-uv
+
+      - name: Cache uv dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.uv/cache
+          key: ${{ runner.os }}-uv-${{ hashFiles('tracker-py/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-
+
+      - name: Setup virtual environment and install package
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install uv
+          uv venv
+          source .venv/bin/activate
+          # Install the package first in editable mode
+          pip install -e .
+          # Then install dependencies
+          task install
+          uv pip install pytest-asyncio
+          # Verify package installation
+          python -c "from tracker.logging_config import setup_logging; print('Package imported successfully')"
+
+      - name: Install and configure AWS CLI
+        run: |
+          echo "Checking AWS CLI installation..."
+          if [ -d "/usr/local/aws-cli/v2/current" ]; then
+            echo "AWS CLI already installed, updating..."
+            curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            if [ $? -ne 0 ]; then
+              echo "Failed to download AWS CLI"
+              exit 1
+            fi
+            
+            unzip -q awscliv2.zip
+            if [ $? -ne 0 ]; then
+              echo "Failed to unzip AWS CLI"
+              exit 1
+            fi
+            
+            sudo ./aws/install --update
+            if [ $? -ne 0 ]; then
+              echo "Failed to update AWS CLI"
+              exit 1
+            fi
+          else
+            echo "Installing AWS CLI..."
+            curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            if [ $? -ne 0 ]; then
+              echo "Failed to download AWS CLI"
+              exit 1
+            fi
+            
+            unzip -q awscliv2.zip
+            if [ $? -ne 0 ]; then
+              echo "Failed to unzip AWS CLI"
+              exit 1
+            fi
+            
+            sudo ./aws/install
+            if [ $? -ne 0 ]; then
+              echo "Failed to install AWS CLI"
+              exit 1
+            fi
+          fi
+          
+          aws --version
+          if [ $? -ne 0 ]; then
+            echo "AWS CLI installation verification failed"
+            exit 1
+          fi
+          
+          echo "Configuring AWS CLI for LocalStack..."
+          aws configure set aws_access_key_id test
+          aws configure set aws_secret_access_key test
+          aws configure set region us-east-1
+          aws configure set output json
+          
+      - name: Start and verify LocalStack
+        run: |
+          echo "Pulling LocalStack image..."
+          docker pull localstack/localstack:latest
+          
+          echo "Starting LocalStack container..."
+          docker run -d --name localstack -p 4566:4566 \
+            -e SERVICES=s3 \
+            -e DEFAULT_REGION=us-east-1 \
+            -e AWS_ACCESS_KEY_ID=test \
+            -e AWS_SECRET_ACCESS_KEY=test \
+            -e DEBUG=1 \
+            -e EAGER_SERVICE_LOADING=1 \
+            -v "/var/run/docker.sock:/var/run/docker.sock" \
+            localstack/localstack:latest
+
+          echo "Waiting for initial container startup (15 seconds)..."
+          sleep 15
+          
+          # Output initial container logs for debugging
+          echo "Initial container logs:"
+          docker logs localstack
+            
+          # Wait for LocalStack to be ready and verify S3
+          max_attempts=40
+          attempt=1
+          while [ $attempt -le $max_attempts ]; do
+            echo "Attempt $attempt/$max_attempts: Checking LocalStack status..."
+            
+            # Check container status
+            container_status=$(docker inspect -f '{{.State.Status}}' localstack)
+            if [ "$container_status" != "running" ]; then
+              echo "Container is not running (status: $container_status)"
+              [ $attempt -eq $max_attempts ] && {
+                echo "Container logs:"
+                docker logs localstack
+                exit 1
+              }
+              sleep 5
+              attempt=$((attempt + 1))
+              continue
+            fi
+            
+            # Check service health
+            health_response=$(curl -s http://localhost:4566/_localstack/health)
+            if ! echo "$health_response" | grep -q '"s3": "available"'; then
+              echo "S3 service not ready yet"
+              [ $attempt -eq $max_attempts ] && {
+                echo "Health check failed. Response:"
+                echo "$health_response"
+                exit 1
+              }
+              sleep 5
+              attempt=$((attempt + 1))
+              continue
+            fi
+            
+            # Try to create a test bucket
+            echo "Testing S3 functionality..."
+            if aws --endpoint-url=http://localhost:4566 s3 mb s3://test-bucket; then
+              echo "Successfully created test bucket"
+              # Verify bucket exists
+              if aws --endpoint-url=http://localhost:4566 s3 ls | grep -q "test-bucket"; then
+                echo "Successfully verified test bucket exists"
+                break
+              fi
+            fi
+            
+            echo "Failed to create or verify test bucket"
+            [ $attempt -eq $max_attempts ] && {
+              echo "AWS S3 commands failed. Listing buckets:"
+              aws --endpoint-url=http://localhost:4566 s3 ls
+              exit 1
+            }
+            sleep 5
+            attempt=$((attempt + 1))
+          done
+          
+          echo "LocalStack S3 service is fully operational!"
+
+      - name: Run code quality checks
+        run: |
+          task check-all
+          if [ $? -ne 0 ]; then
+            echo "Code quality checks failed"
+            exit 1
+          fi
+
+      - name: Run tests with coverage
+        run: |
+          echo "Python path: $PYTHONPATH"
+          echo "Current directory: $(pwd)"
+          echo "Directory contents:"
+          ls -R
+          echo "Installed packages:"
+          pip list
+          echo "Running tests..."
+          PYTHONPATH=$PYTHONPATH:$(pwd) task test
+          if [ $? -ne 0 ]; then
+            echo "Tests failed"
+            exit 1
+          fi
+          if [ $? -ne 0 ]; then
+            echo "Coverage checks failed"
+            exit 1
+          fi
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: |
+            tracker-py/htmlcov
+            tracker-py/.coverage

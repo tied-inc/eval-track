@@ -42,6 +42,12 @@ tasks:
     cmds:
       - docker compose restart
 
+  install:
+    desc: Install package in editable mode
+    cmds:
+      - uv sync --frozen
+      - uv pip install -e .
+
   down:
     desc: Stop the app
     cmds:
@@ -60,3 +66,12 @@ tasks:
       - task tracker-go:check-all
       - task tracker-rs:check-all
       - task web:check-all
+
+  integration-test:
+    desc: Run integration tests with local dependencies
+    dir: tracker-py
+    cmds:
+      - docker compose up -d localstack
+      - sleep 10  # Wait for localstack to be healthy
+      - uv run pytest tests/integration/
+      - docker compose down
