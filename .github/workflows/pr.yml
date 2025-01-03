@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./tracker
+        working-directory: ./tracker-py
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -31,7 +31,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.uv/cache
-          key: ${{ runner.os }}-uv-${{ hashFiles('tracker/pyproject.toml') }}
+          key: ${{ runner.os }}-uv-${{ hashFiles('tracker-py/pyproject.toml') }}
           restore-keys: |
             ${{ runner.os }}-uv-
 
@@ -190,5 +190,5 @@ jobs:
         with:
           name: coverage-report
           path: |
-            tracker/htmlcov
-            tracker/.coverage
+            tracker-py/htmlcov
+            tracker-py/.coverage
