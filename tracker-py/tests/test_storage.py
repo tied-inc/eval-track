@@ -6,8 +6,8 @@ from unittest.mock import MagicMock, patch
 import pytest
 from botocore.exceptions import ClientError
 
-from tracker.tracker.settings import settings
-from tracker.tracker.storage.s3 import S3Storage, StorageError
+from tracker.settings import settings
+from tracker.storage.s3 import S3Storage, StorageError
 
 
 @pytest.fixture

@@ -9,7 +9,7 @@ from botocore.exceptions import ClientError, EndpointConnectionError
 
 from tracker.settings import settings
 
-from .storage import AbstractObjectStorage, StorageError
+from tracker.storage.storage import AbstractObjectStorage, StorageError
 
 
 class S3Storage(AbstractObjectStorage):

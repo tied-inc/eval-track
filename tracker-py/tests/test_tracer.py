@@ -6,7 +6,7 @@ from typing import Any
 import pytest
 from pydantic import BaseModel
 
-from tracker.tracker.tracer import capture_response
+from tracker.tracer import capture_response
 
 
 class TestResponse(BaseModel):

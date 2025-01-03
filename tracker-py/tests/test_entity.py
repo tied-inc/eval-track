@@ -3,7 +3,7 @@
 import pytest
 from pydantic import ValidationError
 
-from tracker.tracker.entity import Trace
+from tracker.entity import Trace
 
 
 def test_trace_creation() -> None:
