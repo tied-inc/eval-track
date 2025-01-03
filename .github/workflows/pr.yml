@@ -119,6 +119,13 @@ jobs:
             -e EAGER_SERVICE_LOADING=1 \
             -v "/var/run/docker.sock:/var/run/docker.sock" \
             localstack/localstack:latest
+
+          echo "Waiting for initial container startup (15 seconds)..."
+          sleep 15
+          
+          # Output initial container logs for debugging
+          echo "Initial container logs:"
+          docker logs localstack
             
           # Wait for LocalStack to be ready and verify S3
           max_attempts=40
