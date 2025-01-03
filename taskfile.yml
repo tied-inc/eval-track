@@ -26,6 +26,12 @@ tasks:
     cmds:
       - task --list
 
+  rebuild:
+    desc: Rebuild the app
+    cmds:
+      - docker compose down
+      - docker compose up -d --build
+
   up:
     desc: Start the app
     cmds:

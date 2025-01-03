@@ -8,3 +8,8 @@ export const inngestSettings = {
 	eventKey: process.env.INNGEST_EVENT_KEY || "",
 	signingKey: process.env.INNGEST_SIGNING_KEY || "",
 };
+
+export const awsSettings = {
+	region: process.env.AWS_REGION || "us-west-2",
+	bucketName: process.env.S3_BUCKET_NAME || "eval-track",
+};
