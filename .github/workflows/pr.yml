@@ -51,24 +51,45 @@ jobs:
 
       - name: Install and configure AWS CLI
         run: |
-          echo "Installing AWS CLI..."
-          curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          if [ $? -ne 0 ]; then
-            echo "Failed to download AWS CLI"
-            exit 1
-          fi
-          
-          
-          unzip -q awscliv2.zip
-          if [ $? -ne 0 ]; then
-            echo "Failed to unzip AWS CLI"
-            exit 1
-          fi
-          
-          sudo ./aws/install
-          if [ $? -ne 0 ]; then
-            echo "Failed to install AWS CLI"
-            exit 1
+          echo "Checking AWS CLI installation..."
+          if [ -d "/usr/local/aws-cli/v2/current" ]; then
+            echo "AWS CLI already installed, updating..."
+            curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            if [ $? -ne 0 ]; then
+              echo "Failed to download AWS CLI"
+              exit 1
+            fi
+            
+            unzip -q awscliv2.zip
+            if [ $? -ne 0 ]; then
+              echo "Failed to unzip AWS CLI"
+              exit 1
+            fi
+            
+            sudo ./aws/install --update
+            if [ $? -ne 0 ]; then
+              echo "Failed to update AWS CLI"
+              exit 1
+            fi
+          else
+            echo "Installing AWS CLI..."
+            curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            if [ $? -ne 0 ]; then
+              echo "Failed to download AWS CLI"
+              exit 1
+            fi
+            
+            unzip -q awscliv2.zip
+            if [ $? -ne 0 ]; then
+              echo "Failed to unzip AWS CLI"
+              exit 1
+            fi
+            
+            sudo ./aws/install
+            if [ $? -ne 0 ]; then
+              echo "Failed to install AWS CLI"
+              exit 1
+            fi
           fi
           
           aws --version
