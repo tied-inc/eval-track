@@ -3,10 +3,10 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
 
-from tracker.tracker.logging_config import get_logger, setup_logging
-from tracker.tracker.middleware import api_access_log_middleware, error_handling_middleware, secret_key_middleware
-from tracker.tracker.router import router
-from tracker.tracker.settings import settings
+from tracker.logging_config import get_logger, setup_logging
+from tracker.middleware import api_access_log_middleware, error_handling_middleware, secret_key_middleware
+from tracker.router import router
+from tracker.settings import settings
 
 # Set up centralized logging configuration
 setup_logging()
