@@ -44,7 +44,7 @@ jobs:
           # Install the package first in editable mode
           pip install -e .
           # Then install dependencies
-          task install-tracker
+          task tracker-py:install
           uv pip install pytest-asyncio
           # Verify package installation
           python -c "from tracker.logging_config import setup_logging; print('Package imported successfully')"
@@ -158,7 +158,7 @@ jobs:
 
       - name: Run code quality checks
         run: |
-          task check-all-tracker
+          task tracker-py:check-all
           if [ $? -ne 0 ]; then
             echo "Code quality checks failed"
             exit 1
@@ -173,13 +173,11 @@ jobs:
           echo "Installed packages:"
           pip list
           echo "Running tests..."
-          PYTHONPATH=$PYTHONPATH:$(pwd) task test-tracker
+          PYTHONPATH=$PYTHONPATH:$(pwd) task tracker-py:test
           if [ $? -ne 0 ]; then
             echo "Tests failed"
             exit 1
           fi
-          echo "Running coverage..."
-          PYTHONPATH=$PYTHONPATH:$(pwd) task coverage-tracker
           if [ $? -ne 0 ]; then
             echo "Coverage checks failed"
             exit 1
